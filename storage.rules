@@ -1,0 +1,39 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'shengliang.song.ai@gmail.com' ||
+        (firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+         'admin_neural_prism' in firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('groups', []))
+      );
+    }
+
+    // PUBLIC SCRIPTURE CACHES (Recursive Matching)
+    match /bible_audio/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /bible_corpus/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // ASSETS FOR SHARED DOCUMENTS
+    match /checks/{checkId}/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() || isAdmin();
+    }
+
+    // DEFAULT SECURE PATHS
+    match /{allPaths=**} {
+      allow read, write: if isAuthenticated() || isAdmin();
+    }
+  }
+}

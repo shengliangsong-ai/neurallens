@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Neural Prism Story | Refracting AI into Utility</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #00f2ff, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .prism-blur {
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="selection:bg-indigo-500/30">
+    <!-- Background Decor -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-indigo-600 rounded-full prism-blur"></div>
+    <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-600 rounded-full prism-blur"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-6 py-20">
+        <!-- Back Link -->
+        <a href="/" class="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-400 transition-colors mb-12 uppercase text-xs font-black tracking-widest group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Hub
+        </a>
+
+        <!-- Header -->
+        <header class="mb-24 text-center sm:text-left">
+            <div class="flex justify-center sm:justify-start mb-8">
+                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 drop-shadow-2xl">
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color: #00f2ff" />
+                            <stop offset="50%" style="stop-color: #6366f1" />
+                            <stop offset="100%" style="stop-color: #a855f7" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="512" height="512" rx="128" fill="#020617" />
+                    <g transform="translate(106, 106) scale(1.2)">
+                        <path d="M125 40 L210 180 L125 210 L40 180 Z" fill="none" stroke="url(#logoGrad)" stroke-width="12" stroke-linejoin="round" />
+                        <path d="M40 130 h40 l10 -30 l15 60 l15 -80 l15 100 l15 -80 l15 60 l10 -30 h40" fill="none" stroke="url(#logoGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+                    </g>
+                </svg>
+            </div>
+            <h1 class="text-6xl sm:text-7xl font-black italic tracking-tighter uppercase leading-none mb-6">
+                The Birth of <br/><span class="text-gradient">Neural Prism</span>
+            </h1>
+            <p class="text-xl text-slate-400 font-medium max-w-2xl leading-relaxed">
+                Refracting AI super-intelligence into the spectrum of human utility.
+            </p>
+        </header>
+
+        <!-- Story Content -->
+        <article class="space-y-24">
+            <!-- Inspiration -->
+            <section class="space-y-6">
+                <h2 class="text-xs font-black text-indigo-400 uppercase tracking-[0.4em]">Inspiration</h2>
+                <div class="prose prose-invert prose-lg max-w-none text-slate-300">
+                    <h3 class="text-3xl font-bold text-white mb-4">The Refractive Lens</h3>
+                    <p>
+                        Raw super-intelligence is often blinding. While models like Gemini 3 are incredibly powerful, they are typically locked behind generic chat interfaces. 
+                    </p>
+                    <p>
+                        We were inspired by the physics of a prism—taking intense, uniform light and refracting it into a beautiful, useful spectrum of color. We turned raw logic into task-specific human activities.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Engineering Breakthroughs -->
+            <section class="space-y-8 bg-slate-900/50 border border-slate-800 p-10 rounded-[3rem] shadow-2xl">
+                <h2 class="text-xs font-black text-emerald-400 uppercase tracking-[0.4em]">The Engine</h2>
+                <div class="prose prose-invert prose-lg max-w-none text-slate-300">
+                    <h3 class="text-3xl font-bold text-white mb-6">Serverless Sovereignty</h3>
+                    <p>
+                        We utilized a unique hybrid architecture to balance performance and "Thermodynamic Honesty":
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                        <div class="space-y-3">
+                            <div class="text-indigo-400 font-bold uppercase tracking-widest text-xs">Zero Idle Tax (Firestore)</div>
+                            <p class="text-sm">We rejected provisioned databases that charge even when idle. Firestore scales to zero, ensuring our costs match the user's pulse.</p>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="text-indigo-400 font-bold uppercase tracking-widest text-xs">Binary Chunking (BCP)</div>
+                            <p class="text-sm">We sharded heavy neural audio fragments into NoSQL segments to bypass the 1MB wall while staying 100% serverless.</p>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="text-indigo-400 font-bold uppercase tracking-widest text-xs">Relational Roadmap</div>
+                            <p class="text-sm">Our schema is Postgres-compatible. We are ready to migrate to Cloud SQL as soon as a true serverless option arrives.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Accomplishments -->
+            <section class="space-y-6">
+                <h2 class="text-xs font-black text-amber-400 uppercase tracking-[0.4em]">Innovation</h2>
+                <div class="prose prose-invert prose-lg max-w-none text-slate-300">
+                    <h3 class="text-3xl font-bold text-white mb-4">Neural Simulation</h3>
+                    <p>
+                        We eliminated the need for server-side compilers. In our Builder Studio, the "Run" button triggers a <strong>Heuristic Trace</strong>. 
+                    </p>
+                    <p>
+                        Gemini "imagines" code execution with incredible accuracy, achieving a <strong>10x energy efficiency gain</strong> over traditional cloud containers.
+                    </p>
+                </div>
+            </section>
+
+            <!-- What's next -->
+            <section class="text-center pt-24 border-t border-slate-900 pb-20">
+                <h2 class="text-xs font-black text-indigo-400 uppercase tracking-[0.4em] mb-8">What's next</h2>
+                <h3 class="text-5xl font-black italic tracking-tighter uppercase mb-8">Abundance <span class="text-gradient">Mesh</span></h3>
+                <p class="text-slate-400 max-w-xl mx-auto mb-12 leading-relaxed">
+                    We are building toward the 10:1 Resident/Hub ratio. A future where intelligence is a public utility, free at the point of use.
+                </p>
+                <a href="/" class="px-12 py-5 bg-white text-slate-950 font-black uppercase tracking-widest rounded-2xl hover:bg-indigo-50 transition-all shadow-2xl active:scale-95">
+                    Enter the Spectrum
+                </a>
+            </section>
+        </article>
+
+        <!-- Footer -->
+        <footer class="mt-20 py-12 border-t border-slate-900 flex flex-col items-center gap-4">
+            <div class="w-12 h-1 bg-indigo-600 rounded-full"></div>
+            <p class="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">Neural Prism v9.6.0-SERVERLESS</p>
+            <p class="text-[10px] text-slate-500 italic">Built for humanity. Refracted by Neural Prism.</p>
+        </footer>
+    </div>
+</body>
+</html>

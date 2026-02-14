@@ -1,0 +1,148 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- HELPER FUNCTIONS ---
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'shengliang.song.ai@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         'admin_neural_prism' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('groups', []))
+      );
+    }
+
+    // ----------------------------------------------------------------------
+    // Global Default
+    // ----------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ----------------------------------------------------------------------
+    // NEURAL CACHE & LEDGERS (Shared Knowledge Plane)
+    // ----------------------------------------------------------------------
+    match /neural_audio_ledger/{allPaths=**} {
+      allow read: if true; 
+      allow write: if isAuthenticated(); 
+    }
+
+    match /lecture_cache/{allPaths=**} {
+      allow read: if true; 
+      allow write: if isAuthenticated(); 
+    }
+
+    match /bible_ledger/{allPaths=**} {
+      allow read: if true; 
+      allow write: if isAuthenticated(); 
+    }
+
+    // ----------------------------------------------------------------------
+    // USERS & IDENTITY
+    // ----------------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if isAuthenticated(); 
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin(); 
+    }
+
+    // ----------------------------------------------------------------------
+    // TRANSACTIONS & ESCROW
+    // ----------------------------------------------------------------------
+    match /invitations/{inviteId} { 
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+    }
+    
+    match /receipts/{receiptId} { 
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+    }
+
+    match /coin_transactions/{txId} { 
+      allow read: if isAuthenticated(); 
+      allow create: if isAuthenticated(); 
+    }
+
+    // ----------------------------------------------------------------------
+    // COMMUNITY & CONTENT
+    // ----------------------------------------------------------------------
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow create, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    match /blog_posts/{postId} {
+      allow read: if true;
+      allow create, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    match /channels/{channelId} {
+      allow read: if true; 
+      allow create: if isAuthenticated();
+      allow update: if isAdmin() || isAuthenticated();
+      allow delete: if isAdmin();
+    }
+    
+    match /channel_stats/{id} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /chat_channels/{channelId} {
+      allow read, write: if isAuthenticated();
+      match /messages/{msgId} { allow read, write: if isAuthenticated(); }
+    }
+    
+    match /discussions/{discussionId} { 
+      allow read: if true; 
+      allow write: if isAuthenticated(); 
+    }
+    
+    match /mock_interviews/{interviewId} { 
+      allow read: if isAuthenticated(); 
+      allow write: if isAuthenticated(); 
+    }
+    
+    match /custom_books/{bookId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /system_book_metadata/{bookId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /badges/{badgeId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /code_projects/{projectId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /user_cloud_files/{fileId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /bookings/{bookingId} { allow read, write: if isAuthenticated(); }
+    match /recordings/{recordingId} { allow read, write: if isAuthenticated(); }
+    match /checks/{checkId} { allow read: if true; allow write: if isAuthenticated(); }
+    match /shipping/{labelId} { allow read, write: if isAuthenticated(); }
+    match /icons/{iconId} { allow read, write: if isAuthenticated(); }
+    match /cards/{cardId} { allow read, write: if isAuthenticated(); }
+    match /notebooks/{notebookId} { allow read, write: if isAuthenticated(); }
+    match /feedback/{feedbackId} { allow read, write: if isAuthenticated(); }
+  }
+}

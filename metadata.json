@@ -1,0 +1,9 @@
+{
+  "name": "Neural Lens",
+  "description": "Neural Prism: Sovereign Intelligence Hub. High-Fidelity Infrastructure-Bypass, Multi-Model Orchestration, and Sovereign Vault Persistence.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

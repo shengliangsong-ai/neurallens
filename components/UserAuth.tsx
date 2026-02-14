@@ -1,0 +1,86 @@
+import React, { useState, useEffect } from 'react';
+/* Fix: Standardized Firebase modular imports */
+import { onAuthStateChanged } from '@firebase/auth';
+import { signInWithGoogle, signOut } from '../services/authService';
+// Fix: Correct import for auth from firebaseConfig
+import { auth } from '../services/firebaseConfig';
+import { LogOut, User as UserIcon, Loader2 } from 'lucide-react';
+import { syncUserProfile, logUserActivity } from '../services/firestoreService';
+
+export const UserAuth: React.FC = () => {
+  const [user, setUser] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fix: Use the exported auth instance directly instead of getAuthInstance()
+    if (!auth) {
+        setLoading(false);
+        return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, (u: any) => {
+      setUser(u);
+      setLoading(false);
+      if (u) {
+         syncUserProfile(u).catch(e => console.error("Profile sync failed", e));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      const loggedInUser = await signInWithGoogle();
+      if (loggedInUser) {
+         logUserActivity('login', { method: 'google' });
+      }
+    } catch (e: any) {
+      console.error("Login failed:", e);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+  };
+
+  if (loading) return (
+    <div className="flex items-center px-4 py-2 bg-slate-800/50 rounded-full border border-slate-700">
+        <Loader2 size={16} className="animate-spin text-indigo-400" />
+    </div>
+  );
+
+  if (user) {
+    return (
+      <div className="flex items-center space-x-2 bg-slate-800/50 rounded-full pl-1 pr-2 py-0.5 border border-slate-700">
+        {user.photoURL ? (
+            <img 
+              src={user.photoURL} 
+              alt={user.displayName || 'User'} 
+              className="w-7 h-7 rounded-full border border-indigo-500 object-cover"
+            />
+        ) : (
+            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] font-black text-indigo-400">
+                {(user.displayName || 'U').substring(0, 1).toUpperCase()}
+            </div>
+        )}
+        <button 
+          onClick={handleLogout}
+          className="p-1 text-slate-500 hover:text-red-400 transition-colors"
+          title="Quick Sign Out"
+        >
+          <LogOut size={14} />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleLogin}
+      className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-full transition-all shadow-lg active:scale-95"
+    >
+      <UserIcon size={16} />
+      <span>Sign In</span>
+    </button>
+  );
+};
