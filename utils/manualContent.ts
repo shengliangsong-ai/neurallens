@@ -11,9 +11,7 @@ The Dashboard is your control center for the 24-app spectrum. It organizes super
 
 ### I. Specialized Neural Personas
 As of v12.9.5, the platform utilizes "Hard-Tuned" personas for professional refractions:
-// Fix: Escaped backticks to avoid terminating the template literal prematurely
 - **Software Interviewer (\`0648937375\`)**: Optimized for Socratic friction and Big-O complexity auditing.
-// Fix: Escaped backticks to avoid terminating the template literal prematurely
 - **Linux Kernel Architect (\`0375218270\`)**: Prioritizes memory safety and race condition detection over user comfort.
 
 ### II. High-Fidelity Observability

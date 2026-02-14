@@ -137,15 +137,12 @@ export const IdentityLab: React.FC<IdentityLabProps> = ({ onBack, userProfile, o
               // Calculate width of face in normalized units
               const faceWidthNorm = box.xmax - box.xmin;
               
-              // scale logic: we want the face width to be roughly 140-160px within a 320px frame
-              // Normalized width of 1000 maps to display width of 320.
-              // So, scale = TargetWidthPx / (FaceWidthNorm * (320 / 1000))
+              // scale logic: we want the face width to be roughly 150px within a 320px frame
               const targetFaceWidthPx = 150;
               const scale = Math.max(1, targetFaceWidthPx / (faceWidthNorm * (320 / 1000)));
 
               // Offset logic:
               // Normalized center of 500 should map to UI center (0 offset)
-              // (500 - normalizedActual) * (pixelsPerUnit) * scale
               const calculatedX = (500 - centerX) * (320 / 1000) * scale;
               const calculatedY = (500 - centerY) * (320 / 1000) * scale;
 
