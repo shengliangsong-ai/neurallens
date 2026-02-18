@@ -12,15 +12,25 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isAuthenticated() && (
-        request.auth.token.email == 'shengliang.song.ai@gmail.com' ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-         'admin_neural_prism' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('groups', []))
-      );
+      return isAuthenticated() && (request.auth.token.email == 'shengliang.song.ai@gmail.com');
     }
 
     // ----------------------------------------------------------------------
-    // Global Default
+    // SIGNET IDENTITY REGISTRY (TKS)
+    // ----------------------------------------------------------------------
+    match /identities/{anchorId} {
+      // Public lookup is required for global verification
+      allow read: if true;
+      
+      // First-to-Claim: Only allow creation if the anchor doesn't exist.
+      allow create: if !exists(/databases/$(database)/documents/identities/$(anchorId));
+      
+      // Update and delete are restricted to administrators for revocation/governance
+      allow update, delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------------------------
+    // Global Admin Override
     // ----------------------------------------------------------------------
     match /{document=**} {
       allow read, write: if isAdmin();
@@ -128,14 +138,55 @@ service cloud.firestore {
       allow write: if isAuthenticated();
     }
 
-    match /code_projects/{projectId} {
-      allow read, write: if isAuthenticated();
+    // ----------------------------------------------------------------------
+    // APPLICATIONS & WORKSPACES
+    // ----------------------------------------------------------------------
+    match /groups/{groupId} { 
+      allow read, write: if isAuthenticated(); 
+      match /messages/{msgId} { allow read, write: if isAuthenticated(); }
+    }
+
+    match /code_projects/{projectId} { 
+      allow read, write: if isAuthenticated(); 
+      match /cursors/{clientId} { allow read, write: if isAuthenticated(); }
     }
 
     match /user_cloud_files/{fileId} {
       allow read, write: if isAuthenticated();
     }
 
+    match /whiteboards/{boardId} { 
+      allow read, write: if isAuthenticated(); 
+    }
+
+    match /job_postings/{jobId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /career_applications/{appId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /signed_documents/{docId} {
+      // Must be public read for 3rd party verification links
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /global_stats/{statId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    match /activity_logs/{logId} {
+      allow create: if isAuthenticated();
+      allow read: if isAdmin();
+    }
+
+    // ----------------------------------------------------------------------
+    // STANDARD COLLECTIONS
+    // ----------------------------------------------------------------------
     match /bookings/{bookingId} { allow read, write: if isAuthenticated(); }
     match /recordings/{recordingId} { allow read, write: if isAuthenticated(); }
     match /checks/{checkId} { allow read: if true; allow write: if isAuthenticated(); }
