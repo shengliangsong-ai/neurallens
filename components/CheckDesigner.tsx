@@ -1,9 +1,10 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { 
   ArrowLeft, Wallet, Save, Download, Sparkles, Loader2, User, Hash, QrCode, Mail, 
   Trash2, Printer, CheckCircle, AlertTriangle, Send, Share2, DollarSign, Calendar, 
-  Landmark, Info, Search, Edit3, RefreshCw, ShieldAlert, X, ChevronRight, ImageIcon, Link, Coins, Check as CheckIcon, Palette, Copy, ZoomIn, ZoomOut, Maximize2, PenTool, Upload, Camera, MapPin, HardDrive, List, FileText, Plus, ShieldCheck, Lock, CreditCard, BookOpen, Shield, Timer, TrendingUp, UserCheck, Clock, Trash, History, FilePlus, CopyPlus, Sliders, ShieldCheck as SecurityIcon, Fingerprint, Eye, EyeOff
+  Landmark, Info, Search, Edit3, RefreshCw, ShieldAlert, X, ChevronRight, ImageIcon, Link, Coins, Check as CheckIcon, Palette, Copy, ZoomIn, ZoomOut, Maximize2, PenTool, Upload, Camera, MapPin, HardDrive, List, FileText, Plus, ShieldCheck, CreditCard, BookOpen, Shield, Timer, TrendingUp, UserCheck, Clock, Trash, History, FilePlus, CopyPlus, Sliders, ShieldCheck as SecurityIcon, Fingerprint, Eye, EyeOff
 } from 'lucide-react';
 import { BankingCheck, UserProfile, InsurancePolicy } from '../types';
 import { GoogleGenAI } from "@google/genai";
@@ -109,19 +110,7 @@ export const CheckDesigner: React.FC<CheckDesignerProps> = ({ onBack, currentUse
   const checkIdFromUrl = params.get('id');
   const isReadOnly = params.get('mode') === 'view';
 
-  if (!isReadOnly && isProMember === false) {
-    return (
-        <div className="h-full flex items-center justify-center p-6 bg-slate-950">
-            <div className="max-w-md w-full bg-slate-900 border border-indigo-500/30 rounded-[3rem] p-12 text-center shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-32 bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none"></div>
-                <Lock size={48} className="text-indigo-400 mx-auto mb-6 relative z-10" />
-                <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-4 relative z-10">Pro Access Required</h2>
-                <p className="text-slate-400 text-sm mb-10 font-medium relative z-10">Neural Finance Lab requires an active Pro Membership to design and verify financial assets.</p>
-                <button onClick={onBack} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all relative z-10">Back to Hub</button>
-            </div>
-        </div>
-    );
-  }
+
 
   const [check, setCheck] = useState<BankingCheck>({ ...DEFAULT_CHECK, id: checkIdFromUrl || generateSecureId() });
   const [convertedAssets, setConvertedAssets] = useState<Record<string, string>>({});
@@ -253,7 +242,7 @@ export const CheckDesigner: React.FC<CheckDesignerProps> = ({ onBack, currentUse
     if (!check.amount) return;
     setIsUpdatingWords(true);
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         const response = await ai.models.generateContent({
             model: 'gemini-3-flash-preview',
             contents: `Refract this currency amount into professional legal words for a check: $${check.amount}. Return ONLY the words, no symbols.`,
@@ -267,7 +256,7 @@ export const CheckDesigner: React.FC<CheckDesignerProps> = ({ onBack, currentUse
   const handleGenerateWatermark = async () => {
       setIsGeneratingArt(true);
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+          const ai = getAIClient();
           
           // Neural Stamp Refraction: Weave memo context into a small 1x1 design
           const memoContext = check.memo || 'Secured Asset';

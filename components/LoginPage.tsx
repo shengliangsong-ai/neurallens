@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowRight, Loader2, ShieldCheck, HardDrive, Share2, Sparkles, BookOpen, Key, User, ShieldAlert, Lock, UserCircle, Github } from 'lucide-react';
+import { ArrowRight, Loader2, ShieldCheck, HardDrive, Share2, Sparkles, BookOpen, Key, User, ShieldAlert, EyeOff, UserCircle, Github } from 'lucide-react';
 import { signInWithGoogle } from '../services/authService';
 import { BrandLogo } from './BrandLogo';
 

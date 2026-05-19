@@ -90,7 +90,7 @@ export class GeminiLiveService {
       this.dispatchLog(`Initiating Handshake for Session ID: ${this.id}`, 'info');
       registerAudioOwner(`Live_${this.id}`, () => this.disconnect());
       
-      const key = this.getSanitizedKey(process.env.API_KEY);
+      const key = this.getSanitizedKey(getAIKey());
       if (!key) {
           throw new Error("Gemini API Key missing or invalid in .env file.");
       }

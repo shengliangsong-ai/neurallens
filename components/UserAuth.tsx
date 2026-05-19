@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 /* Fix: Standardized Firebase modular imports */
-import { onAuthStateChanged } from '@firebase/auth';
+import { onAuthStateChanged } from '/services/mockAuth';
 import { signInWithGoogle, signOut } from '../services/authService';
 // Fix: Correct import for auth from firebaseConfig
 import { auth } from '../services/firebaseConfig';

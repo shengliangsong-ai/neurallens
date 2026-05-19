@@ -1,8 +1,9 @@
+import { getAIClient } from '../utils/aiConfig';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { CodeProject, CodeFile, UserProfile, Channel, CursorPosition, CloudItem, TranscriptItem } from '../types';
-import { ArrowLeft, Save, Plus, Github, Cloud, HardDrive, Code, X, ChevronRight, ChevronDown, File, Folder, DownloadCloud, Loader2, CheckCircle, AlertCircle, Info, FolderPlus, FileCode, RefreshCw, LogIn, CloudUpload, Trash2, ArrowUp, Edit2, FolderOpen, MoreVertical, Send, MessageSquare, Bot, Mic, Sparkles, SidebarClose, SidebarOpen, Users, Eye, FileText as FileTextIcon, Image as ImageIcon, StopCircle, Minus, Maximize2, Minimize2, Lock, Unlock, Share2, Terminal, Copy, WifiOff, PanelRightClose, PanelRightOpen, PanelLeftClose, PanelLeftOpen, Monitor, Laptop, PenTool, Edit3, ShieldAlert, ZoomIn, ZoomOut, Columns, Rows, Grid2X2, Square as SquareIcon, GripVertical, GripHorizontal, FileSearch, Indent, Wand2, Check, UserCheck, Play, Camera, MicOff, Signal } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Github, Cloud, HardDrive, Code, X, ChevronRight, ChevronDown, File, Folder, DownloadCloud, Loader2, CheckCircle, AlertCircle, Info, FolderPlus, FileCode, RefreshCw, LogIn, CloudUpload, Trash2, ArrowUp, Edit2, FolderOpen, MoreVertical, Send, MessageSquare, Bot, Mic, Sparkles, SidebarClose, SidebarOpen, Users, Eye, FileText as FileTextIcon, Image as ImageIcon, StopCircle, Minus, Maximize2, Minimize2, EyeOff, Unlock, Share2, Terminal, Copy, WifiOff, PanelRightClose, PanelRightOpen, PanelLeftClose, PanelLeftOpen, Monitor, Laptop, PenTool, Edit3, ShieldAlert, ZoomIn, ZoomOut, Columns, Rows, Grid2X2, Square as SquareIcon, GripVertical, GripHorizontal, FileSearch, Indent, Wand2, Check, UserCheck, Play, Camera, MicOff, Signal } from 'lucide-react';
 import { auth, db } from '../services/firebaseConfig';
-import { listCloudDirectory, saveProjectToCloud, deleteCloudItem, createCloudFolder, subscribeToCodeProject, saveCodeProject, updateCodeFile, updateCursor, claimCodeProjectLock, updateProjectActiveFile, deleteCodeFile, moveCloudFile, updateProjectAccess, sendShareNotification, deleteCloudFolderRecursive, getCloudFileContent } from '../services/firestoreService';
+import { listCloudDirectory, saveProjectToCloud, deleteCloudItem, createCloudFolder, subscribeToCodeProject, saveCodeProject, updateCodeFile, updateCursor, claimCodeProjectEyeOff, updateProjectActiveFile, deleteCodeFile, moveCloudFile, updateProjectAccess, sendShareNotification, deleteCloudFolderRecursive, getCloudFileContent } from '../services/firestoreService';
 import { ensureCodeStudioFolder, listDriveFiles, readDriveFile, saveToDrive, deleteDriveFile, createDriveFolder, DriveFile, moveDriveFile } from '../services/googleDriveService';
 import { connectGoogleDrive, signInWithGoogle, connectGoogleDrive as connectDrive } from '../services/authService';
 import { fetchRepoInfo, fetchRepoContents, fetchFileContent, updateRepoFile, deleteRepoFile, renameRepoFile } from '../services/githubService';
@@ -615,7 +616,7 @@ export const CodeStudio: React.FC<CodeStudioProps> = ({ onBack, currentUser, use
     dispatchLog(`NEURAL CORE: Executing Trace Simulation [${activeFile.name}]`, 'info', { category: 'NEURAL_CORE' });
 
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         const contextFiles = activeSlots.filter(f => f !== null && f.name !== activeFile.name).map(f => `File: ${f?.name}\nContent:\n${f?.content}`).join('\n\n');
         
         const systemPrompt = `You are a high-fidelity Heuristic Simulation Engine. Predict exact STDOUT/STDERR for the provided code in a virtual POSIX terminal.
@@ -743,7 +744,7 @@ export const CodeStudio: React.FC<CodeStudioProps> = ({ onBack, currentUser, use
       setIsFormattingSlots(prev => ({ ...prev, [slotIdx]: true }));
       dispatchLog(`NEURAL CORE: Refracting Source Layout [${file.name}]`, 'info', { category: 'NEURAL_CORE' });
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+          const ai = getAIClient();
           const prompt = `expert code formatter. Reformat the following ${file.language} code. respond ONLY with code.`;
           const resp = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: prompt + "\nCODE:\n" + file.content });
           const formatted = resp.text?.trim() || file.content;
@@ -866,14 +867,14 @@ export const CodeStudio: React.FC<CodeStudioProps> = ({ onBack, currentUser, use
       if (!input.trim()) return;
       setChatMessages(prev => [...prev, { role: 'user', text: input }]);
       setIsChatThinking(true);
-      dispatchLog(`NEURAL CORE: Dispatching user handshake to Gemini 3 Pro`, 'info', { category: 'NEURAL_CORE', model: 'gemini-3-pro-preview' });
+      dispatchLog(`NEURAL CORE: Dispatching user handshake to Gemini 3.1 Pro`, 'info', { category: 'NEURAL_CORE', model: 'gemini-3.1-pro-preview' });
       
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+          const ai = getAIClient();
           if (!chatRef.current) {
               const systemPrompt = `You are a Senior Code Partner. Use 'update_active_file' for modifications to focused slot or 'write_file' to manage workspace paths. Use 'read_file' to examine existing code. PRIORITIZE tool usage over text descriptions. All code edits are manifested instantly.`;
               chatRef.current = ai.chats.create({
-                model: 'gemini-3-pro-preview',
+                model: 'gemini-3.1-pro-preview',
                 config: { systemInstruction: systemPrompt, tools: codeTools }
               });
           }

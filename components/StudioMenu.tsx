@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserProfile, SubscriptionTier, GlobalStats, Channel } from '../types';
 import { getGlobalStats, isUserAdmin, ADMIN_GROUP } from '../services/firestoreService';
-import { Sparkles, BarChart2, Plus, Wand2, Crown, Settings, Book, Users, LogIn, Terminal, Cloud, Globe, Mic, LayoutGrid, HardDrive, AlertCircle, Gift, CreditCard, Languages, MousePointer2, Rocket, Shield, LogOut, ShieldCheck, Lock, Activity, UserCircle, Github, BookOpen, BookText } from 'lucide-react';
+import { Sparkles, BarChart2, Plus, Wand2, Crown, Settings, Book, Users, LogIn, Terminal, Cloud, Globe, Mic, LayoutGrid, HardDrive, AlertCircle, Gift, CreditCard, Languages, MousePointer2, Rocket, Shield, LogOut, ShieldCheck, Key, Activity, UserCircle, Github, BookOpen, BookText, Server } from 'lucide-react';
 import { VOICES } from '../utils/initialData';
 import { signOut } from '../services/authService';
 
@@ -18,7 +18,6 @@ interface StudioMenuProps {
   setIsVoiceCreateOpen: (open: boolean) => void;
   onUpgradeClick: () => void;
   setIsSyncModalOpen: (open: boolean) => void;
-  setIsSettingsModalOpen: (open: boolean) => void;
   onOpenUserGuide: () => void;
   onNavigate: (view: string, params?: Record<string, string>) => void;
   onOpenPrivacy: () => void;
@@ -34,7 +33,7 @@ interface StudioMenuProps {
 
 export const StudioMenu: React.FC<StudioMenuProps> = ({
   isUserMenuOpen, setIsUserMenuOpen, userProfile, setUserProfile, currentUser,
-  setIsCreateModalOpen, setIsVoiceCreateOpen, onUpgradeClick, setIsSettingsModalOpen, onOpenUserGuide, onNavigate, onOpenPrivacy,
+  setIsCreateModalOpen, setIsVoiceCreateOpen, onUpgradeClick, onOpenUserGuide, onNavigate, onOpenPrivacy,
   className, channels = [],
   language, setLanguage, isSuperAdmin: propSuperAdmin, isProMember, t
 }) => {
@@ -123,6 +122,21 @@ export const StudioMenu: React.FC<StudioMenuProps> = ({
                <span className="font-bold">Meet the Architect</span>
             </button>
 
+            <button 
+                onClick={() => {
+                   import('../utils/aiConfig').then(m => {
+                      if (m.promptForGeminiKey()) {
+                          window.location.reload();
+                      }
+                   });
+                   setIsUserMenuOpen(false);
+                }} 
+                className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors group"
+            >
+               <div className="p-1.5 bg-slate-800 text-slate-400 rounded-md group-hover:text-amber-400"><Key size={16}/></div>
+               <span className="font-bold">AI Model Token</span>
+            </button>
+
             <a 
                 href="https://github.com/aivoicecast/AIVoiceCast"
                 target="_blank"
@@ -153,17 +167,31 @@ export const StudioMenu: React.FC<StudioMenuProps> = ({
                             <span className="font-medium">Manual Create</span>
                         </div>
                     </button>
+                    <button 
+                        onClick={() => {
+                            window.dispatchEvent(new Event('MISSING_API_KEY'));
+                            setIsUserMenuOpen(false);
+                        }} 
+                        className="w-full flex items-center justify-between px-3 py-2 text-sm text-amber-500 hover:bg-slate-800 rounded-lg group"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="p-1.5 bg-slate-800 text-amber-600 rounded-md"><Key size={16}/></div>
+                            <span className="font-bold">Update API Key</span>
+                        </div>
+                    </button>
                 </>
             ) : (
                 <button 
-                    onClick={() => { onUpgradeClick(); setIsUserMenuOpen(false); }} 
-                    className="w-full flex items-center justify-between px-3 py-2 text-sm text-slate-500 hover:bg-slate-800 rounded-lg group"
+                    onClick={() => {
+                        window.dispatchEvent(new Event('MISSING_API_KEY'));
+                        setIsUserMenuOpen(false);
+                    }} 
+                    className="w-full flex items-center justify-between px-3 py-2 text-sm text-amber-500 hover:bg-slate-800 rounded-lg group"
                 >
                     <div className="flex items-center gap-3">
-                        <div className="p-1.5 bg-slate-800 text-slate-600 rounded-md"><Lock size={16}/></div>
-                        <span className="font-medium">Create Podcast</span>
+                        <div className="p-1.5 bg-slate-800 text-amber-600 rounded-md"><Key size={16}/></div>
+                        <span className="font-bold">Set API Key</span>
                     </div>
-                    <span className="text-[8px] font-black text-amber-500 uppercase">PRO</span>
                 </button>
             )}
 
@@ -178,11 +206,6 @@ export const StudioMenu: React.FC<StudioMenuProps> = ({
 
             <button onClick={() => { onOpenUserGuide(); setIsUserMenuOpen(false); }} className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"><Book size={16} /><span>User Guide</span></button>
             <button onClick={() => { onOpenPrivacy(); setIsUserMenuOpen(false); }} className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"><Shield size={16} /><span>Privacy Policy</span></button>
-            
-            <button onClick={() => { setIsSettingsModalOpen(true); setIsUserMenuOpen(false); }} className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-                <Settings size={16} />
-                <span className={!isProMember ? "font-bold text-indigo-400" : ""}>{!isProMember ? 'Upgrade & Settings' : 'Settings'}</span>
-            </button>
             
             {isSuperAdmin && (
                 <>
@@ -204,6 +227,15 @@ export const StudioMenu: React.FC<StudioMenuProps> = ({
                             <Terminal size={16}/>
                         </div>
                         <span>Admin Inspector</span>
+                    </button>
+                    <button 
+                        onClick={() => { onNavigate('firestore_inspector'); setIsUserMenuOpen(false); }} 
+                        className="w-full flex items-center space-x-3 px-3 py-2 text-xs font-black uppercase tracking-widest text-red-500 hover:bg-red-900/20 rounded-lg transition-all border border-red-900/30 group"
+                    >
+                        <div className="p-1.5 bg-red-900/30 rounded-md group-hover:bg-red-600 group-hover:text-white transition-colors">
+                            <Server size={16}/>
+                        </div>
+                        <span>Registry Inspector</span>
                     </button>
                 </>
             )}

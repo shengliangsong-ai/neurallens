@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { 
@@ -144,7 +145,7 @@ export const BookStudio: React.FC<BookStudioProps> = ({ onBack, onOpenManual }) 
     if (generatingCovers.has(book.id)) return;
     setGeneratingCovers(prev => new Set(prev).add(book.id));
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         const prompt = `Professional minimal book cover for "${book.title}". Subtitle: "${book.subtitle}". Clean white background, high-end technical publication style, 8k. No text.`;
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image',

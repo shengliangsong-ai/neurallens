@@ -1,7 +1,8 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useEffect, useRef } from 'react';
 /* Added missing AppWindow, Cloud, and Activity to resolve compilation errors on lines 155, 164, and 224 */
-import { ArrowLeft, Sparkles, Download, Loader2, RefreshCw, Zap, Check, Upload, X, Image as ImageIcon, AlertCircle, Share2, Link, Lock, Info, AppWindow, Cloud, Activity } from 'lucide-react';
+import { ArrowLeft, Sparkles, Download, Loader2, RefreshCw, Zap, Check, Upload, X, Image as ImageIcon, AlertCircle, Share2, Link, EyeOff, Info, AppWindow, Cloud, Activity } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { resizeImage } from '../utils/imageUtils';
 import { saveIcon, uploadFileToStorage, getIcon, deductCoins, AI_COSTS } from '../services/firestoreService';
@@ -30,19 +31,7 @@ const STYLE_PRESETS = [
 ];
 
 export const IconGenerator: React.FC<IconGeneratorProps> = ({ onBack, currentUser, iconId, isProMember, onOpenManual }) => {
-  if (isProMember === false) {
-    return (
-        <div className="h-full flex items-center justify-center p-6 bg-slate-950">
-            <div className="max-w-md w-full bg-slate-900 border border-indigo-500/30 rounded-[3rem] p-12 text-center shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-32 bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none"></div>
-                <Lock size={48} className="text-indigo-400 mx-auto mb-6 relative z-10" />
-                <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-4 relative z-10">Pro Access Required</h2>
-                <p className="text-slate-400 text-sm mb-10 font-medium relative z-10">Neural Icon Lab requires an active Pro Membership to generate high-fidelity branding assets.</p>
-                <button onClick={onBack} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all relative z-10">Back to Hub</button>
-            </div>
-        </div>
-    );
-  }
+
 
   const [prompt, setPrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState(STYLE_PRESETS[0]);
@@ -79,11 +68,11 @@ export const IconGenerator: React.FC<IconGeneratorProps> = ({ onBack, currentUse
     setShareLink(null);
     
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = getAIClient();
       const styleInstruction = `Professional app icon design for: ${prompt}. ${selectedStyle.prompt}. Square, isolated on white background, high quality, 8k resolution, centered composition. No text.`;
       
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-image-preview',
+        model: 'gemini-3.1-flash-image-preview',
         contents: [{ text: styleInstruction }],
         config: { 
             imageConfig: { 

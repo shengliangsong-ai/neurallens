@@ -4,7 +4,7 @@ import { getPendingInvitations, respondToInvitation, getPendingBookings, respond
 import { Invitation, Booking, DigitalReceipt } from '../types';
 import { auth } from '../services/firebaseConfig';
 /* Fix: Standardized Firebase modular imports */
-import { onAuthStateChanged } from '@firebase/auth';
+import { onAuthStateChanged } from '/services/mockAuth';
 
 export const Notifications: React.FC = () => {
   const [invites, setInvites] = useState<Invitation[]>([]);

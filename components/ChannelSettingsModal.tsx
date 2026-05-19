@@ -6,7 +6,7 @@ import { auth } from '../services/firebaseConfig';
 import { modifyCurriculumWithAI, generateChannelFromDocument } from '../services/channelGenerator';
 import { generateCurriculum } from '../services/curriculumGenerator';
 import { generateLectureScript, summarizeLectureForContext } from '../services/lectureGenerator';
-import { X, Lock, Globe, Users, Save, Loader2, Trash2, BookOpen, Plus, LayoutList, Mic, MicOff, Sparkles, Star, Podcast, RefreshCw, Zap, Activity, FileText, Database } from 'lucide-react';
+import { X, EyeOff, Globe, Users, Save, Loader2, Trash2, BookOpen, Plus, LayoutList, Mic, MicOff, Sparkles, Star, Podcast, RefreshCw, Zap, Activity, FileText, Database } from 'lucide-react';
 import { VOICES } from '../utils/initialData';
 import { logger } from '../services/logger';
 
@@ -245,7 +245,7 @@ export const ChannelSettingsModal: React.FC<ChannelSettingsModalProps> = ({ isOp
                 <div className="space-y-3">
                     <label className="block text-xs font-bold text-slate-500 uppercase">Visibility</label>
                     <div className="grid grid-cols-3 gap-2">
-                        <button type="button" onClick={() => setVisibility('private')} className={`py-2 rounded-lg text-xs font-medium flex flex-col items-center justify-center space-y-1 border transition-all ${visibility === 'private' ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}`}><Lock size={16} /><span>Private</span></button>
+                        <button type="button" onClick={() => setVisibility('private')} className={`py-2 rounded-lg text-xs font-medium flex flex-col items-center justify-center space-y-1 border transition-all ${visibility === 'private' ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}`}><EyeOff size={16} /><span>Private</span></button>
                         <button type="button" onClick={() => setVisibility('public')} className={`py-2 rounded-lg text-xs font-medium flex flex-col items-center justify-center space-y-1 border transition-all ${visibility === 'public' ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}`}><Globe size={16} /><span>Public</span></button>
                         <button type="button" onClick={() => setVisibility('group')} className={`py-2 rounded-lg text-xs font-medium flex flex-col items-center justify-center space-y-1 border transition-all ${visibility === 'group' ? 'bg-purple-600 border-purple-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}`}><Users size={16} /><span>Group</span></button>
                     </div>

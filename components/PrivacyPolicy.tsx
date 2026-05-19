@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Shield, Lock, Eye, Database, Server, Cloud, HardDrive, Github, Wallet, Truck, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Shield, EyeOff, Eye, Database, Server, Cloud, HardDrive, Github, Wallet, Truck, Image as ImageIcon } from 'lucide-react';
 
 interface PrivacyPolicyProps {
   onBack: () => void;
@@ -47,7 +47,7 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
             </section>
 
             <section className="space-y-6">
-                <h2 className="text-2xl font-bold text-white flex items-center gap-2"><Lock size={24} className="text-indigo-400"/> 2. Data Sovereignty</h2>
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2"><EyeOff size={24} className="text-indigo-400"/> 2. Data Sovereignty</h2>
                 <p className="text-sm">
                     Intelligence is refracted, not retained. We utilize stateless sessions to minimize data persistence. All technical artifacts reside in your personal cloud (Google Drive/GitHub).
                 </p>

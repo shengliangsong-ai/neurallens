@@ -1,8 +1,10 @@
+import { getAIClient } from '../utils/aiConfig';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { getDebugCollectionDocs, seedDatabase, seedBlogPosts, recalculateGlobalStats, isUserAdmin, deleteFirestoreDoc, purgeFirestoreCollection, setUserSubscriptionTier, updateAllChannelDatesToToday } from '../services/firestoreService';
 import { listUserBackups, deleteCloudFile, CloudFileEntry, getCloudFileContent } from '../services/cloudService';
-import { ArrowLeft, RefreshCw, Database, Code, UploadCloud, Users, ShieldCheck, Crown, Trash2, ShieldAlert, Loader2, Zap, Activity, CheckCircle, Copy, Check, X, Film, GraduationCap, AlertCircle, Info, Cloud, Settings, Calendar, Folder, FolderOpen, CornerLeftUp, FileJson, LayoutGrid, Rss, Terminal, Server, Eye } from 'lucide-react';
-import { auth } from '../services/firebaseConfig';
+import { ArrowLeft, RefreshCw, Database, Code, UploadCloud, Users, ShieldCheck, Crown, Trash2, ShieldAlert, Loader2, Zap, Activity, CheckCircle, Copy, Check, X, Film, GraduationCap, AlertCircle, Info, Cloud, Settings, Calendar, Folder, FolderOpen, CornerLeftUp, FileJson, LayoutGrid, Rss, Terminal, Server, Eye, Rocket } from 'lucide-react';
+import { auth, db } from '../services/firebaseConfig';
+import { collection, doc, setDoc, updateDoc, deleteDoc } from '../services/localFirestoreAdapter';
 import { UserProfile } from '../types';
 import { GoogleGenAI } from "@google/genai";
 import { safeJsonStringify } from '../utils/idUtils';
@@ -17,7 +19,7 @@ const COLLECTIONS = [
   'recordings', 'discussions', 'blogs', 'blog_posts', 'job_postings', 
   'career_applications', 'code_projects', 'whiteboards', 'saved_words', 
   'cards', 'icons', 'checks', 'shipping', 'coin_transactions', 'tasks', 
-  'notebooks', 'invitations', 'mock_interviews', 'bible_ledger'
+  'notebooks', 'invitations', 'mock_interviews', 'bible_ledger', 'test_table'
 ];
 
 interface DiagnosticStep {
@@ -172,12 +174,12 @@ export const FirestoreInspector: React.FC<FirestoreInspectorProps> = ({ onBack, 
     };
 
     updateStep('auth', { status: 'running' });
-    if (!process.env.API_KEY) updateStep('auth', { status: 'failed', error: 'Missing Key' });
+    if (!getAIKey()) updateStep('auth', { status: 'failed', error: 'Missing Key' });
     else updateStep('auth', { status: 'success', details: 'API Key located.' });
 
     updateStep('standard', { status: 'running' });
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         const res = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: 'test' });
         if (res.text) updateStep('standard', { status: 'success', details: 'Flash responsive.' });
         else throw new Error("Empty response");
@@ -190,6 +192,35 @@ export const FirestoreInspector: React.FC<FirestoreInspectorProps> = ({ onBack, 
     } catch (e: any) { updateStep('storage', { status: 'failed', error: e.message }); }
 
     setIsTestingGemini(false);
+  };
+
+  const handleRunPerfTest = async () => {
+    if (!db) return alert("Database not initialized");
+    const count = 10;
+    const docIds = Array.from({ length: count }).map((_, i) => `perf_doc_${Date.now()}_${i}`);
+    const results: string[] = [];
+    
+    try {
+        const t0 = performance.now();
+        // Insert
+        await Promise.all(docIds.map(id => setDoc(doc(db, 'test_table', id), { name: 'test', value: 1, updatedAt: new Date().toISOString() })));
+        const t1 = performance.now();
+        results.push(`Inserted ${count} docs: ${(t1 - t0).toFixed(2)}ms`);
+
+        // Update
+        await Promise.all(docIds.map(id => updateDoc(doc(db, 'test_table', id), { value: 2, updatedAt: new Date().toISOString() })));
+        const t2 = performance.now();
+        results.push(`Updated ${count} docs: ${(t2 - t1).toFixed(2)}ms`);
+
+        // Delete
+        await Promise.all(docIds.map(id => deleteDoc(doc(db, 'test_table', id))));
+        const t3 = performance.now();
+        results.push(`Deleted ${count} docs: ${(t3 - t2).toFixed(2)}ms`);
+
+        alert(`Performance Test Results:\n\n${results.join('\n')}`);
+    } catch (e: any) {
+        alert("Perf test failed: " + e.message);
+    }
   };
 
   return (
@@ -272,7 +303,7 @@ export const FirestoreInspector: React.FC<FirestoreInspectorProps> = ({ onBack, 
                         <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">Ledger Auditor</h2>
                         <p className="text-slate-500 text-sm max-w-md mx-auto">Sovereign NoSQL management for the Neural Prism community registry.</p>
                    </div>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mx-auto">
                         <button onClick={() => { if(confirm("Seed Database?")) seedDatabase() }} className="p-6 bg-slate-900 border border-slate-800 rounded-[2rem] text-left hover:border-emerald-500/50 transition-all group">
                             <UploadCloud className="text-emerald-500 mb-4 group-hover:scale-110 transition-transform" size={32}/>
                             <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Seed Hub Channels</h3>
@@ -282,6 +313,11 @@ export const FirestoreInspector: React.FC<FirestoreInspectorProps> = ({ onBack, 
                             <ShieldCheck className="text-indigo-400 mb-4 group-hover:scale-110 transition-transform" size={32}/>
                             <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Run Diagnostics</h3>
                             <p className="text-[10px] text-slate-500">Audit connectivity and API health.</p>
+                        </button>
+                        <button onClick={handleRunPerfTest} className="p-6 bg-slate-900 border border-slate-800 rounded-[2rem] text-left hover:border-red-500/50 transition-all group">
+                            <Rocket className="text-red-500 mb-4 group-hover:scale-110 transition-transform" size={32}/>
+                            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">CRUD Perf Test</h3>
+                            <p className="text-[10px] text-slate-500">Test concurrent Firestore performance.</p>
                         </button>
                    </div>
                 </div>

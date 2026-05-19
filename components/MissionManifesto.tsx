@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Zap, Heart, Users, BrainCircuit, Rocket, Code, Palette, Wallet, Truck, Box, Sparkles, TrendingUp, ShieldCheck, Target, Globe, Library, Smartphone, Database, Scale, ArrowRight, Star, History, TrendingDown, Layers, Map, Lock, CheckCircle2, DollarSign, Calendar, Briefcase, Video, BookText } from 'lucide-react';
+import { ArrowLeft, Zap, Heart, Users, BrainCircuit, Rocket, Code, Palette, Wallet, Truck, Box, Sparkles, TrendingUp, ShieldCheck, Target, Globe, Library, Smartphone, Database, Scale, ArrowRight, Star, History, TrendingDown, Layers, Map, EyeOff, CheckCircle2, DollarSign, Calendar, Briefcase, Video, BookText } from 'lucide-react';
 
 interface MissionManifestoProps {
   onBack: () => void;
@@ -93,10 +93,10 @@ export const MissionManifesto: React.FC<MissionManifestoProps> = ({ onBack }) =>
                         <p className="text-indigo-400 font-black text-xs uppercase mt-2">$300/yr Subscriptions</p>
                     </div>
                     <ul className="space-y-4 text-sm text-slate-400 font-medium">
-                        <li className="flex items-center gap-2"><Lock size={14} className="text-slate-600"/> High Marginal Cost per Logic</li>
-                        <li className="flex items-center gap-2"><Lock size={14} className="text-slate-600"/> Data-Center Cluster Dependency</li>
-                        <li className="flex items-center gap-2"><Lock size={14} className="text-slate-600"/> Fragmented App Verticals</li>
-                        <li className="flex items-center gap-2"><Lock size={14} className="text-slate-600"/> Fragile Centralized Privacy</li>
+                        <li className="flex items-center gap-2"><EyeOff size={14} className="text-slate-600"/> High Marginal Cost per Logic</li>
+                        <li className="flex items-center gap-2"><EyeOff size={14} className="text-slate-600"/> Data-Center Cluster Dependency</li>
+                        <li className="flex items-center gap-2"><EyeOff size={14} className="text-slate-600"/> Fragmented App Verticals</li>
+                        <li className="flex items-center gap-2"><EyeOff size={14} className="text-slate-600"/> Fragile Centralized Privacy</li>
                     </ul>
                 </div>
 

@@ -195,5 +195,8 @@ service cloud.firestore {
     match /cards/{cardId} { allow read, write: if isAuthenticated(); }
     match /notebooks/{notebookId} { allow read, write: if isAuthenticated(); }
     match /feedback/{feedbackId} { allow read, write: if isAuthenticated(); }
+    
+    // Performance testing table
+    match /test_table/{docId} { allow read, write: if isAuthenticated(); }
   }
 }

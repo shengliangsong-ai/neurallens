@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { 
   ArrowLeft, FileUp, Loader2, Database, ShieldCheck, Zap, 
@@ -7,8 +8,8 @@ import {
 } from 'lucide-react';
 import { GoogleGenAI, Type } from '@google/genai';
 import { saveScriptureToLedger, saveAudioToLedger, getScriptureFromLedger, getScriptureAudioUrl } from '../services/firestoreService';
-import { collection, query, where, getDocs } from '@firebase/firestore';
-import { ref, listAll, getDownloadURL } from '@firebase/storage';
+import { collection, query, where, getDocs } from '../services/localFirestoreAdapter';
+import { ref, listAll, getDownloadURL } from '/services/mockStorage';
 import { db } from '../services/firebaseConfig';
 import { DualVerse } from '../types';
 import { synthesizeSpeech, TtsProvider } from '../services/tts';
@@ -218,12 +219,12 @@ export const ScriptureIngest: React.FC<ScriptureIngestProps> = ({ onBack }) => {
   };
 
   const synthesizeChapter = async (book: string, chapter: string): Promise<DualVerse[]> => {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Generate all verses of ${book} chapter ${chapter}. Return the complete text. Ensure accuracy. Output as JSON array of objects with keys: number, en, zh.`;
-      
       dispatchLog(`[${chapter}] Handshaking Neural Core...`, 'info');
 
       try {
+          const ai = getAIClient();
+          const prompt = `Generate all verses of ${book} chapter ${chapter}. Return the complete text. Ensure accuracy. Output as JSON array of objects with keys: number, en, zh.`;
+          
           const response = await ai.models.generateContent({
             model: 'gemini-3-flash-preview',
             contents: prompt,

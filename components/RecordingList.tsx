@@ -11,7 +11,7 @@ import {
   FileSignature, UserCheck, Repeat, Plus, CloudUpload, Monitor, Activity
 } from 'lucide-react';
 import { auth, db } from '../services/firebaseConfig';
-import { doc, updateDoc } from '@firebase/firestore';
+import { doc, updateDoc } from '../services/localFirestoreAdapter';
 import { getYouTubeEmbedUrl, deleteYouTubeVideo, uploadToYouTube, getYouTubeVideoUrl } from '../services/youtubeService';
 import { getDriveToken, signInWithGoogle, connectGoogleDrive } from '../services/authService';
 import { downloadDriveFileAsBlob, deleteDriveFile, getDriveFileStreamUrl } from '../services/googleDriveService';

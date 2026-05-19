@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 import { GoogleGenAI, Type } from '@google/genai';
 import { Channel, Chapter, NeuralLensAudit } from '../types';
 import { incrementApiUsage, getUserProfile, deductCoins, AI_COSTS } from './firestoreService';
@@ -12,7 +13,7 @@ export async function generateChannelFromPrompt(
   language: 'en' | 'zh' = 'en'
 ): Promise<Channel | null> {
   const category = 'CURRICULUM_PHASE';
-  const model = 'gemini-3-pro-preview';
+  const model = 'gemini-3.1-pro-preview';
   try {
     const langInstruction = language === 'zh' 
       ? 'Output Language: Chinese.' 
@@ -46,7 +47,7 @@ export async function generateChannelFromPrompt(
     `;
 
     // Create fresh instance right before call as per guidelines for dynamic key support
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAIClient();
     const startTime = performance.now();
     const response = await ai.models.generateContent({
         model,
@@ -108,7 +109,7 @@ export async function generateChannelFromPrompt(
 
 export async function generateChannelCoverArt(title: string, description: string): Promise<string | null> {
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         const prompt = `Generate a professional, high-quality, artistic podcast cover art for a series titled "${title}". 
         Context: ${description}. 
         Artistic Style: Modern, clean, 8k resolution, cinematic lighting, conceptual art. 
@@ -144,9 +145,9 @@ export async function modifyCurriculumWithAI(
   language: 'en' | 'zh' = 'en'
 ): Promise<Chapter[] | null> {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAIClient();
     const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
+        model: 'gemini-3.1-pro-preview',
         contents: `User wants: ${userPrompt}. Current: ${JSON.stringify(currentChapters)}`,
         config: { responseMimeType: 'application/json' }
     });
@@ -172,8 +173,8 @@ export async function generateChannelFromDocument(
   enableAudit: boolean = false
 ): Promise<Channel | null> {
   const category = 'DOCUMENT_INGEST';
-  // Fix: changed model to gemini-3-pro-preview to support structured output (JSON mode/schema)
-  const modelId = 'gemini-3-pro-preview'; 
+  // Fix: changed model to gemini-3.1-pro-preview to support structured output (JSON mode/schema)
+  const modelId = 'gemini-3.1-pro-preview'; 
   try {
     const langInstruction = language === 'zh' ? 'Output Language: Chinese.' : 'Output Language: English.';
     
@@ -216,7 +217,7 @@ export async function generateChannelFromDocument(
         ? `${systemPrompt}\n${langInstruction}\n\nURL TO ANALYZE: ${source.url}\n\n${userRequest}`
         : `${systemPrompt}\n${langInstruction}\n\nSOURCE TEXT:\n${source.text?.substring(0, 100000)}\n\n${userRequest}`;
 
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAIClient();
     const startTime = performance.now();
     const response = await ai.models.generateContent({
         model: modelId,

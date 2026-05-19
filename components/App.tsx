@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback, ErrorInfo, ReactNode,
 import { 
   Podcast, Search, LayoutGrid, RefreshCw, 
   Home, Video, User, ArrowLeft, Play, Gift, 
-  Calendar, Briefcase, Users, Disc, FileText, Code, Wand2, PenTool, Rss, Loader2, MessageSquare, AppWindow, Square, Menu, X, Shield, Plus, Rocket, Book, AlertTriangle, Terminal, Trash2, LogOut, Truck, Maximize2, Minimize2, Wallet, Sparkles, Coins, Cloud, ChevronDown, Command, Activity, BookOpen, Scroll, GraduationCap, Cpu, Star, Lock, Crown, ShieldCheck, Flame, Zap, RefreshCcw, Bug, ChevronUp, Fingerprint, Database, CheckCircle, Pause, PlayCircle as PlayIcon, Copy, BookText, Send, MessageCircle, FileUp, FileSignature, IdCard, Info, BarChart3, Target, Beaker, Ghost, Signal,
+  Calendar, Briefcase, Users, Disc, FileText, Code, Wand2, PenTool, Rss, Loader2, MessageSquare, AppWindow, Square, Menu, X, Shield, Plus, Rocket, Book, AlertTriangle, Terminal, Trash2, LogOut, Truck, Maximize2, Minimize2, Wallet, Sparkles, Coins, Cloud, ChevronDown, Command, Activity, BookOpen, Scroll, GraduationCap, Cpu, Star, EyeOff, Key, Crown, ShieldCheck, Flame, Zap, RefreshCcw, Bug, ChevronUp, Fingerprint, Database, CheckCircle, Pause, PlayCircle as PlayIcon, Copy, BookText, Send, MessageCircle, FileUp, FileSignature, IdCard, Info, BarChart3, Target, Beaker, Ghost, Signal,
   ShieldAlert, ChevronRight, ChevronLeft, ArrowDownRight, ArrowUpRight, Clock, ArrowRight,
   Repeat, FileDown
 } from 'lucide-react';
@@ -27,11 +27,11 @@ import { CalendarView } from './CalendarView';
 import { PodcastFeed } from './PodcastFeed'; 
 import { MissionManifesto } from './MissionManifesto';
 import { CodeStudio } from './CodeStudio';
+import { ApiKeyModal } from './ApiKeyModal';
 import { Whiteboard } from './Whiteboard';
 import { BlogView } from './BlogView';
 import { WorkplaceChat } from './WorkplaceChat';
 import { LoginPage } from './LoginPage'; 
-import { SettingsModal } from './SettingsModal'; 
 import { PricingModal } from './PricingModal'; 
 import { CareerCenter } from './CareerCenter';
 import { UserManual } from './UserManual'; 
@@ -65,8 +65,8 @@ import { NeuralLens } from './NeuralLens';
 import { IdentityLab } from './IdentityLab';
 
 import { auth, db } from '../services/firebaseConfig';
-import { onAuthStateChanged } from '@firebase/auth';
-import { onSnapshot, doc } from '@firebase/firestore';
+import { onAuthStateChanged } from '/services/mockAuth';
+import { onSnapshot, doc } from '../services/localFirestoreAdapter';
 import { getUserChannels, saveUserChannel } from '../utils/db';
 import { HANDCRAFTED_CHANNELS } from '../utils/initialData';
 import { stopAllPlatformAudio } from '../utils/audioUtils';
@@ -187,8 +187,7 @@ const PUBLIC_VIEWS: ViewID[] = ['mission', 'story', 'privacy', 'user_guide', 'ch
 const FREE_VIEWS: ViewID[] = ['directory', 'podcast_detail', 'dashboard', 'groups'];
 
 const isRestrictedView = (v: string): boolean => {
-    const safeSet = [...PUBLIC_VIEWS, ...FREE_VIEWS];
-    return !safeSet.includes(v as any);
+    return true;
 };
 
 const GuardedView = ({ id, children, isProMember, isSuperAdmin, t, onUpgradeClick }: { 
@@ -202,11 +201,13 @@ const GuardedView = ({ id, children, isProMember, isSuperAdmin, t, onUpgradeClic
     if (isRestrictedView(id) && !isProMember) return (
       <div className="h-full w-full flex items-center justify-center bg-slate-950 p-6">
           <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-[3.5rem] p-12 text-center shadow-2xl relative overflow-hidden animate-fade-in-up">
-              <div className="absolute top-0 right-0 p-32 bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none"></div>
-              <div className="w-20 h-20 bg-slate-950 rounded-3xl border border-indigo-500/30 flex items-center justify-center mx-auto mb-8 shadow-inner"><Lock size={40} className="text-indigo-500" /></div>
-              <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-4">{t.proRequired}</h2>
-              <p className="text-slate-400 text-sm mb-10 leading-relaxed font-medium">{t.proDesc}</p>
-              <button onClick={onUpgradeClick} className="w-full py-4 bg-indigo-600 hover:bg-indigo-50 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl transition-all active:scale-95">{t.upgradeNow}</button>
+              <div className="absolute top-0 right-0 p-32 bg-amber-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+              <div className="w-20 h-20 bg-slate-950 rounded-3xl border border-amber-500/30 flex items-center justify-center mx-auto mb-8 shadow-inner"><Key size={40} className="text-amber-500" /></div>
+              <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-4">API Key Required</h2>
+              <p className="text-slate-400 text-sm mb-10 leading-relaxed font-medium">To access this application, please provide your own Gemini API Key. Your key will be stored locally and never leaves your browser.</p>
+              <button onClick={() => {
+                   window.dispatchEvent(new Event('MISSING_API_KEY'));
+              }} className="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl transition-all active:scale-95">Set Gemini Token</button>
           </div>
       </div>
     );
@@ -263,6 +264,13 @@ const App: React.FC = () => {
   const [feedbackSuccess, setFeedbackSuccess] = useState(false);
 
   const [manualViewId, setManualViewId] = useState<ViewID | null>(null);
+
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
+  useEffect(() => {
+    const handleMissingKey = () => setIsApiKeyModalOpen(true);
+    window.addEventListener('MISSING_API_KEY', handleMissingKey);
+    return () => window.removeEventListener('MISSING_API_KEY', handleMissingKey);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -363,7 +371,6 @@ const App: React.FC = () => {
   const [userChannels, setUserChannels] = useState<Channel[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isVoiceCreateOpen, setIsVoiceCreateOpen] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   
   const [commentChannelId, setCommentChannelId] = useState<string | null>(null);
@@ -392,19 +399,10 @@ const App: React.FC = () => {
   }, [userProfile, currentUser]);
 
   const isProMember = useMemo(() => {
-    if (isSuperAdmin) return true;
-    if (userProfile?.subscriptionTier === 'pro') return true;
-    if (userProfile?.createdAt) {
-      if (Date.now() - userProfile.createdAt < 30 * 24 * 60 * 60 * 1000) return true;
-    }
-    return false;
+    return !!localStorage.getItem("GEMINI_API_KEY");
   }, [userProfile, isSuperAdmin]);
 
   const handleSetViewState = useCallback((target: ViewID, params: Record<string, string> = {}) => {
-    if (isRestrictedView(target) && !isProMember) {
-        setIsPricingModalOpen(true);
-        return;
-    }
     stopAllPlatformAudio(`Nav:${activeViewID}->${target}`);
     setActiveViewID(target);
     setActiveChannelId(params.channelId || null);
@@ -542,7 +540,17 @@ const App: React.FC = () => {
             setCurrentUser(u); 
             syncUserProfile(u).catch(console.error); 
         }
-        else { setCurrentUser(null); setUserProfile(null); }
+        else { 
+            const session = getSovereignSession();
+            setCurrentUser(session.user); 
+            setUserProfile(session.profile); 
+        }
+        setAuthLoading(false);
+    }, (error) => {
+        console.error("Auth state changed error:", error);
+        const session = getSovereignSession();
+        setCurrentUser(session.user);
+        setUserProfile(session.profile);
         setAuthLoading(false);
     });
     return () => unsub();
@@ -645,7 +653,7 @@ const App: React.FC = () => {
   }, [isProMember]);
 
   if (authLoading) return <div className="h-screen bg-slate-950 flex flex-col items-center justify-center gap-4"><Loader2 className="animate-spin text-indigo-500" size={32} /><span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Initializing Spectrum (v9.0.0)...</span></div>;
-  if (!currentUser && !PUBLIC_VIEWS.includes(activeViewID)) return <LoginPage onMissionClick={() => handleSetViewState('mission')} onStoryClick={() => handleSetViewState('story')} onPrivacyClick={() => handleSetViewState('privacy')} onResumeClick={() => handleSetViewState('resume')} />;
+
 
   const getLogColor = (type: SystemLogMsg['type']) => {
       switch(type) {
@@ -716,14 +724,14 @@ const App: React.FC = () => {
               <button onClick={() => setShowConsole(!showConsole)} className={`p-2 transition-all rounded-lg ${showConsole ? 'bg-red-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`} title="Neural Diagnostics"><Bug size={18} className={!showConsole ? 'animate-pulse text-red-500' : ''} /></button>
               <button onClick={() => window.location.reload()} className="p-2 text-slate-400 hover:text-white transition-colors" title="Reload Web App"><RefreshCcw size={18} /></button>
               {userProfile && (<button onClick={() => handleSetViewState('coin_wallet')} className="flex items-center gap-2 px-3 py-1.5 bg-amber-900/20 hover:bg-amber-900/40 text-amber-400 rounded-full border border-amber-500/30 transition-all hidden sm:flex"><Coins size={16}/><span className="font-black text-xs">{userProfile.coinBalance || 0}</span></button>)}
-              <div className="relative"><button onClick={() => { setIsUserMenuOpen(!isUserMenuOpen); setIsAppsMenuOpen(false); }} className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden hover:border-indigo-500 transition-colors"><img src={currentUser?.photoURL || `https://ui-avatars.com/api/?name=${currentUser?.displayName}`} alt="Profile" className="w-full h-full object-cover" /></button><StudioMenu isUserMenuOpen={isUserMenuOpen} setIsUserMenuOpen={setIsUserMenuOpen} currentUser={currentUser} userProfile={userProfile} setUserProfile={setUserProfile} globalVoice="Auto" setGlobalVoice={()=>{}} setIsCreateModalOpen={setIsCreateModalOpen} setIsVoiceCreateOpen={setIsVoiceCreateOpen} onNavigate={(v, p) => handleSetViewState(v as any, p)} onUpgradeClick={() => setIsPricingModalOpen(true)} setIsSyncModalOpen={()=>{}} setIsSettingsModalOpen={setIsSettingsModalOpen} onOpenUserGuide={() => handleSetViewState('user_guide')} onOpenPrivacy={() => handleSetViewState('privacy')} t={t} language={language} setLanguage={handleUpdateLanguage} channels={allChannels} isSuperAdmin={isSuperAdmin} isProMember={isProMember} /></div>
+              <div className="relative"><button onClick={() => { setIsUserMenuOpen(!isUserMenuOpen); setIsAppsMenuOpen(false); }} className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden hover:border-indigo-500 transition-colors"><img src={currentUser?.photoURL || `https://ui-avatars.com/api/?name=${currentUser?.displayName}`} alt="Profile" className="w-full h-full object-cover" /></button><StudioMenu isUserMenuOpen={isUserMenuOpen} setIsUserMenuOpen={setIsUserMenuOpen} currentUser={currentUser} userProfile={userProfile} setUserProfile={setUserProfile} globalVoice="Auto" setGlobalVoice={()=>{}} setIsCreateModalOpen={setIsCreateModalOpen} setIsVoiceCreateOpen={setIsVoiceCreateOpen} onNavigate={(v, p) => handleSetViewState(v as any, p)} onUpgradeClick={() => setIsPricingModalOpen(true)} setIsSyncModalOpen={()=>{}} onOpenUserGuide={() => handleSetViewState('user_guide')} onOpenPrivacy={() => handleSetViewState('privacy')} t={t} language={language} setLanguage={handleUpdateLanguage} channels={allChannels} isSuperAdmin={isSuperAdmin} isProMember={isProMember} /></div>
            </div>
         </header>
 
         <main className="flex-1 overflow-hidden relative flex flex-col pb-10">
             <GuardedView id={activeViewID} isProMember={isProMember} isSuperAdmin={isSuperAdmin} t={t} onUpgradeClick={() => setIsPricingModalOpen(true)}>
                 {activeViewID === 'dashboard' && ( <Dashboard userProfile={userProfile} isProMember={isProMember} onNavigate={handleSetViewState} language={language} handleVote={handleVote} onOpenManual={() => setManualViewId('dashboard')} /> )}
-                {activeViewID === 'directory' && ( <PodcastFeed channels={allChannels} onChannelClick={(id) => { setActiveChannelId(id); handleSetViewState('podcast_detail', { channelId: id }); }} onStartLiveSession={handleStartLiveSession} userProfile={userProfile} globalVoice="Auto" currentUser={currentUser} t={t} setChannelToEdit={(c) => setEditChannelId(c.id)} setIsSettingsModalOpen={setIsSettingsModalOpen} onCommentClick={(c) => setCommentChannelId(c.id)} handleVote={handleVote} handleBookmarkToggle={handleBookmarkToggle} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onNavigate={(v) => handleSetViewState(v as any)} onUpdateChannel={handleUpdateChannel} onOpenPricing={() => setIsPricingModalOpen(true)} language={language} onMagicCreate={handleMagicCreate} onOpenManual={() => setManualViewId('directory')} /> )}
+                {activeViewID === 'directory' && ( <PodcastFeed channels={allChannels} onChannelClick={(id) => { setActiveChannelId(id); handleSetViewState('podcast_detail', { channelId: id }); }} onStartLiveSession={handleStartLiveSession} userProfile={userProfile} globalVoice="Auto" currentUser={currentUser} t={t} setChannelToEdit={(c) => setEditChannelId(c.id)} onCommentClick={(c) => setCommentChannelId(c.id)} handleVote={handleVote} handleBookmarkToggle={handleBookmarkToggle} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onNavigate={(v) => handleSetViewState(v as any)} onUpdateChannel={handleUpdateChannel} onOpenPricing={() => setIsPricingModalOpen(true)} language={language} onMagicCreate={handleMagicCreate} onOpenManual={() => setManualViewId('directory')} /> )}
                 {activeViewID === 'podcast_detail' && activeChannel && ( <PodcastDetail channel={activeChannel} onBack={handleDetailBack} onStartLiveSession={handleStartLiveSession} language={language} currentUser={currentUser} userProfile={userProfile} onUpdateChannel={handleUpdateChannel} isProMember={isProMember} /> )}
                 {activeViewID === 'live_session' && liveSessionParams && ( <LiveSession channel={liveSessionParams.channel} onEndSession={() => handleSetViewState(liveSessionParams.returnTo || 'directory')} language={language} initialContext={liveSessionParams.context} recordingEnabled={liveSessionParams.recordingEnabled} lectureId={liveSessionParams.bookingId} recordScreen={liveSessionParams.recordScreen} recordCamera={liveSessionParams.recordCamera} activeSegment={liveSessionParams.activeSegment} recordingDuration={liveSessionParams.recordingDuration} interactionEnabled={liveSessionParams.interactionEnabled} recordingTarget={liveSessionParams.recordingTarget} sessionTitle={liveSessionParams.sessionTitle} /> )}
                 {activeViewID === 'docs' && ( <div className="p-8 max-w-5xl mx-auto h-full overflow-y-auto"><DocumentList onBack={() => handleSetViewState('dashboard')} onOpenManual={() => setManualViewId('docs')} /></div> )}
@@ -746,7 +754,7 @@ const App: React.FC = () => {
                 {activeViewID === 'blog' && ( <div className="h-full overflow-y-auto"><BlogView currentUser={currentUser} onBack={() => handleSetViewState('dashboard')} onOpenManual={() => setManualViewId('blog')} /></div> )}
                 {activeViewID === 'chat' && ( <WorkplaceChat onBack={() => handleSetViewState('dashboard')} currentUser={currentUser} onOpenManual={() => setManualViewId('chat')} /> )}
                 {activeViewID === 'careers' && ( <div className="h-full overflow-y-auto"><CareerCenter onBack={() => handleSetViewState('dashboard')} currentUser={currentUser} jobId={activeItemId || undefined} onOpenManual={() => setManualViewId('careers')} /></div> )}
-                {activeViewID === 'calendar' && ( <CalendarView channels={allChannels} handleChannelClick={(id) => { setActiveChannelId(id); handleSetViewState('podcast_detail', { channelId: id }); }} handleVote={handleVote} currentUser={currentUser} setChannelToEdit={(c) => setEditChannelId(c.id)} setIsSettingsModalOpen={setIsSettingsModalOpen} globalVoice="Auto" t={t} onCommentClick={(c) => setCommentChannelId(c.id)} onStartLiveSession={handleStartLiveSession} onCreateChannel={handleCreateChannel} onSchedulePodcast={() => setIsCreateModalOpen(true)} onOpenManual={() => setManualViewId('calendar')} /> )}
+                {activeViewID === 'calendar' && ( <CalendarView channels={allChannels} handleChannelClick={(id) => { setActiveChannelId(id); handleSetViewState('podcast_detail', { channelId: id }); }} handleVote={handleVote} currentUser={currentUser} setChannelToEdit={(c) => setEditChannelId(c.id)} globalVoice="Auto" t={t} onCommentClick={(c) => setCommentChannelId(c.id)} onStartLiveSession={handleStartLiveSession} onCreateChannel={handleCreateChannel} onSchedulePodcast={() => setIsCreateModalOpen(true)} onOpenManual={() => setManualViewId('calendar')} /> )}
                 {activeViewID === 'mentorship' && ( <div className="h-full overflow-y-auto"><MentorBooking currentUser={currentUser} userProfile={userProfile} channels={allChannels} onStartLiveSession={handleStartLiveSession} onOpenManual={() => setManualViewId('mentorship')} /></div> )}
                 {activeViewID === 'recordings' && ( <div className="p-8 max-w-5xl mx-auto h-full overflow-y-auto"><RecordingList onBack={() => handleSetViewState('dashboard')} onStartLiveSession={handleStartLiveSession} onOpenManual={() => setManualViewId('recordings')} /></div> )}
                 {(activeViewID === 'check_designer' || activeViewID === 'check_viewer') && ( <CheckDesigner onBack={() => handleSetViewState('dashboard')} currentUser={currentUser} userProfile={userProfile} isProMember={isProMember} onOpenManual={() => setManualViewId('check_designer')} /> )}
@@ -934,7 +942,6 @@ const App: React.FC = () => {
         <CreateChannelModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onCreate={handleCreateChannel} currentUser={currentUser} />
         <VoiceCreateModal isOpen={isVoiceCreateOpen} onClose={() => setIsVoiceCreateOpen(false)} onCreate={handleCreateChannel} />
         <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} user={userProfile} onSuccess={(tier) => { if(userProfile) setUserProfile({...userProfile, subscriptionTier: tier}); }} />
-        {currentUser && ( <SettingsModal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} user={userProfile || { uid: currentUser.uid, email: currentUser.email, displayName: currentUser.displayName, photoURL: currentUser.photoURL, groups: [], coinBalance: 0, createdAt: Date.now(), lastLogin: Date.now(), subscriptionTier: 'free', apiUsageCount: 0 } as UserProfile} onUpdateProfile={setUserProfile} onUpgradeClick={() => setIsPricingModalOpen(true)} isSuperAdmin={isSuperAdmin} onNavigateAdmin={() => handleSetViewState('firestore_debug')} /> )}
         
         {commentChannelId && ( <CommentsModal isOpen={true} onClose={() => setCommentChannelId(null)} channel={commentChannel!} onAddComment={handleAddComment} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} currentUser={currentUser} /> )}
         {editChannelId && ( <ChannelSettingsModal isOpen={true} onClose={() => setEditChannelId(null)} channel={editChannel!} onUpdate={handleUpdateChannel} /> )}

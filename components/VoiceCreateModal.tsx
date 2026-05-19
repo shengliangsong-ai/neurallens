@@ -3,7 +3,7 @@ import { Channel, Group } from '../types';
 import { generateChannelFromPrompt } from '../services/channelGenerator';
 import { auth } from '../services/firebaseConfig';
 import { getUserGroups } from '../services/firestoreService';
-import { Mic, MicOff, Sparkles, X, Loader2, Check, Lock, Globe, Users, AlertCircle, Wand2, ArrowRight, BrainCircuit, MessageSquare } from 'lucide-react';
+import { Mic, MicOff, Sparkles, X, Loader2, Check, EyeOff, Globe, Users, AlertCircle, Wand2, ArrowRight, BrainCircuit, MessageSquare } from 'lucide-react';
 
 interface VoiceCreateModalProps {
   isOpen: boolean;
@@ -180,7 +180,7 @@ export const VoiceCreateModal: React.FC<VoiceCreateModalProps> = ({ isOpen, onCl
                <div className="bg-slate-800/30 p-4 rounded-2xl border border-slate-700 space-y-3">
                   <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Privacy Control</label>
                   <div className="flex gap-2">
-                     <button onClick={() => setVisibility('private')} className={`flex-1 py-2 rounded-xl text-[10px] font-bold border flex items-center justify-center gap-1.5 transition-all ${visibility === 'private' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500'}`}><Lock size={12}/> PRIVATE</button>
+                     <button onClick={() => setVisibility('private')} className={`flex-1 py-2 rounded-xl text-[10px] font-bold border flex items-center justify-center gap-1.5 transition-all ${visibility === 'private' ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500'}`}><EyeOff size={12}/> PRIVATE</button>
                      <button onClick={() => setVisibility('public')} className={`flex-1 py-2 rounded-xl text-[10px] font-bold border flex items-center justify-center gap-1.5 transition-all ${visibility === 'public' ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500'}`}><Globe size={12}/> PUBLIC</button>
                   </div>
                </div>

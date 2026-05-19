@@ -24,6 +24,9 @@ dist
 .env.test.local
 .env.production.local
 
+# Firebase Configuration
+firebase-applet-config.json
+
 # Private Keys (Sensitive!)
 services/private_keys.ts
 

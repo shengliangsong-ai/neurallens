@@ -6,13 +6,13 @@ import {
   deleteObject, 
   listAll,
   getBytes
-} from '@firebase/storage';
+} from '/services/mockStorage';
 import { 
   doc, 
   setDoc, 
   getDoc, 
   Timestamp 
-} from '@firebase/firestore';
+} from '/services/localFirestoreAdapter';
 import { db, storage, auth } from './firebaseConfig';
 import { 
   importFullDatabase, 

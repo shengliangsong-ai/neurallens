@@ -13,7 +13,7 @@ const MAX_RETRIES = 3;
  * Sanitizes the API key to ensure it is trimmed and not a placeholder.
  */
 function getSanitizedKey(): string {
-    const raw = (process.env.API_KEY || '').trim();
+    const raw = (getAIKey() || '').trim();
     if (!raw || raw === 'YOUR_GEMINI_API_KEY_HERE') {
         return '';
     }
@@ -113,8 +113,8 @@ export async function performNeuralLensAudit(
     channelId?: string
 ): Promise<NeuralLensAudit | null> {
     const category = 'SHADOW_AUDIT';
-    // Fix: Using gemini-3-pro-preview instead of image model to support responseSchema/JSON mode
-    const model = 'gemini-3-pro-preview';
+    // Fix: Using gemini-3.1-pro-preview instead of image model to support responseSchema/JSON mode
+    const model = 'gemini-3.1-pro-preview';
     const reportUuid = generateSecureId();
     
     if (!lecture.sections || lecture.sections.length === 0) {
@@ -344,7 +344,7 @@ export async function generateLectureScript(
   cumulativeContext?: string
 ): Promise<GeneratedLecture | null> {
   const category = 'NEURAL_CORE';
-  const model = 'gemini-3-pro-preview';
+  const model = 'gemini-3.1-pro-preview';
 
   try {
     const contentUid = await generateContentUid(topic, channelContext, language);
@@ -378,7 +378,7 @@ export async function generateLectureScript(
             config: { 
                 systemInstruction: customSystemInstruction || "Expert technical educator. Respond in JSON.",
                 responseMimeType: 'application/json',
-                thinkingConfig: { thinkingBudget: 8000 },
+                thinkingConfig: { thinkingBudget: 12000 },
                 responseSchema: {
                     type: Type.OBJECT,
                     properties: {
@@ -463,7 +463,7 @@ export async function generateDesignDocFromTranscript(
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-3-pro-preview',
+            model: 'gemini-3.1-pro-preview',
             contents: prompt,
         });
         return response.text || null;

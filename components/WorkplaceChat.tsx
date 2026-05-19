@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChatChannel, RealTimeMessage, Group, UserProfile } from '../types';
 import { sendMessage, subscribeToMessages, getUserGroups, getAllUsers, createOrGetDMChannel, getUserDMChannels, deleteMessage, uploadFileToStorage } from '../services/firestoreService';
 import { auth } from '../services/firebaseConfig';
-import { Send, Hash, Lock, User, Plus, Search, MessageSquare, MoreVertical, Paperclip, Loader2, ArrowLeft, Menu, Users, Briefcase, Reply, Trash2, X, FileText, Image as ImageIcon, Video, CheckCircle, Info } from 'lucide-react';
+import { Send, Hash, EyeOff, User, Plus, Search, MessageSquare, MoreVertical, Paperclip, Loader2, ArrowLeft, Menu, Users, Briefcase, Reply, Trash2, X, FileText, Image as ImageIcon, Video, CheckCircle, Info } from 'lucide-react';
 
 interface WorkplaceChatProps {
   onBack: () => void;
@@ -289,7 +289,7 @@ export const WorkplaceChat: React.FC<WorkplaceChatProps> = ({ onBack, currentUse
                   <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 text-slate-400 hover:text-white md:hidden"><Menu size={20} /></button>
                   <h3 className="font-bold text-white flex items-center gap-2">
                       {activeChannelType === 'public' && <Hash size={18} className="text-slate-400"/>}
-                      {activeChannelType === 'group' && <Lock size={18} className="text-slate-400"/>}
+                      {activeChannelType === 'group' && <EyeOff size={18} className="text-slate-400"/>}
                       {activeChannelType === 'dm' && <User size={18} className="text-slate-400"/>}
                       {activeChannelName}
                   </h3>

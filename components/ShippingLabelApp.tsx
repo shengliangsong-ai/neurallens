@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 import { GoogleGenAI } from '@google/genai';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -63,7 +64,7 @@ export const ShippingLabelApp: React.FC<ShippingLabelAppProps> = ({ onBack, onOp
       if (!input) return;
       setIsParsing(type);
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+          const ai = getAIClient();
           const response = await ai.models.generateContent({
               model: 'gemini-3-flash-preview',
               contents: `Refract this raw text into a structured JSON address object with fields: name, street, city, state, zip, country. TEXT: "${input}"`,

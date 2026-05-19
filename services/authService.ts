@@ -4,52 +4,26 @@ import {
     signInWithPopup, 
     linkWithPopup,
     signOut as firebaseSignOut
-} from '@firebase/auth';
-import type { User } from '@firebase/auth';
+} from '/services/mockAuth';
+import type { User } from '/services/mockAuth';
 import { auth } from './firebaseConfig';
 import { UserProfile } from '../types';
 
 /**
  * Standard Google OAuth via Firebase
  */
+const MockUser = {
+    uid: localStorage.getItem('local_uid') || (() => { const uid = 'local-' + Date.now(); localStorage.setItem('local_uid', uid); return uid; })(),
+    displayName: 'Local User',
+    email: 'local@app.com',
+    photoURL: ''
+};
+
 export async function signInWithGoogle(): Promise<User | null> {
-    if (!auth) return null;
-
-    const provider = new GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/drive.file');
-    provider.addScope('https://www.googleapis.com/auth/youtube.upload'); 
-    provider.addScope('https://www.googleapis.com/auth/youtube.force-ssl'); 
-    provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
-    provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-    provider.addScope('https://www.googleapis.com/auth/gmail.send');
-    
-    provider.setCustomParameters({
-        prompt: 'select_account'
-    });
-
-    try {
-        const result = await signInWithPopup(auth, provider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential?.accessToken;
-
-        if (token) {
-            localStorage.setItem('google_drive_token', token); 
-            localStorage.setItem('token_expiry', (Date.now() + 3500 * 1000).toString());
-        }
-
-        const userSummary = {
-            uid: result.user.uid,
-            displayName: result.user.displayName,
-            email: result.user.email,
-            photoURL: result.user.photoURL
-        };
-        localStorage.setItem('drive_user', JSON.stringify(userSummary));
-
-        return result.user;
-    } catch (error: any) {
-        handleAuthError(error);
-        throw error;
-    }
+    localStorage.setItem('drive_user', JSON.stringify(MockUser));
+    localStorage.setItem('google_drive_token', 'local_dummy_token');
+    localStorage.setItem('token_expiry', (Date.now() + 3500 * 1000).toString());
+    return MockUser as any;
 }
 
 /**
@@ -64,7 +38,7 @@ export function isJudgeSession(): boolean {
  */
 export function getSovereignSession(): { user: any, profile: UserProfile | null } {
     const data = localStorage.getItem('drive_user');
-    const user = data ? JSON.parse(data) : null;
+    const user = data ? JSON.parse(data) : MockUser;
     return { user, profile: null };
 }
 

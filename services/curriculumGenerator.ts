@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import { GoogleGenAI, Type } from '@google/genai';
 import { Chapter } from '../types';
@@ -18,7 +19,7 @@ export async function generateCurriculum(
     const preProfile = auth.currentUser ? await getUserProfile(auth.currentUser.uid) : null;
     const preBalance = preProfile?.coinBalance || 0;
 
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAIClient();
     const prompt = `Design a 10-chapter learning path for topic: "${topic}". Context: ${context}`;
     const inputSizeBytes = new TextEncoder().encode(prompt).length;
 

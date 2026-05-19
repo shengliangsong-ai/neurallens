@@ -47,7 +47,7 @@ export const SYSTEM_CONTENT: Record<string, SpotlightChannelData> = {
           },
           {
             speaker: "Teacher",
-            text: "We do not use generic chat windows. We orchestrate between gemini-3-pro-preview for complex document synthesis and gemini-3-flash-preview for sub-second logic simulation. In v7.0.0-ULTRA, we use Complexity Balancer v4. This ensures you always have the right amount of intelligence for the task at hand."
+            text: "We do not use generic chat windows. We orchestrate between gemini-3.1-pro-preview for complex document synthesis and gemini-3-flash-preview for sub-second logic simulation. In v7.0.0-ULTRA, we use Complexity Balancer v4. This ensures you always have the right amount of intelligence for the task at hand."
           },
           {
             speaker: "Student",

@@ -2,7 +2,7 @@
 import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { Channel, UserProfile, GeneratedLecture, TtsProvider } from '../types';
 // Added MarkdownView import
-import { Play, MessageSquare, Heart, Share2, Bookmark, Music, Plus, Pause, Loader2, Volume2, VolumeX, GraduationCap, ChevronRight, Mic, AlignLeft, BarChart3, User, AlertCircle, Zap, Radio, Square, Sparkles, LayoutGrid, List, SearchX, Activity, Video, Terminal, RefreshCw, Scroll, Lock, Crown, Settings2, Globe, Cpu, Speaker, Search, X, ArrowLeft, Smartphone, Wand2, ShieldCheck, BookText, Type, Check, RotateCcw, Sliders, Palette } from 'lucide-react';
+import { Play, MessageSquare, Heart, Share2, Bookmark, Music, Plus, Pause, Loader2, Volume2, VolumeX, GraduationCap, ChevronRight, Mic, AlignLeft, BarChart3, User, AlertCircle, Zap, Radio, Square, Sparkles, LayoutGrid, List, SearchX, Activity, Video, Terminal, RefreshCw, Scroll, EyeOff, Crown, Settings2, Globe, Cpu, Speaker, Search, X, ArrowLeft, Smartphone, Wand2, ShieldCheck, BookText, Type, Check, RotateCcw, Sliders, Palette } from 'lucide-react';
 import { ChannelCard } from './ChannelCard';
 import { CreatorProfileModal } from './CreatorProfileModal';
 import { PodcastListTable, SortKey } from './PodcastListTable';
@@ -25,7 +25,6 @@ interface PodcastFeedProps {
   onRefresh?: () => void;
   currentUser?: any;
   setChannelToEdit?: (channel: Channel) => void;
-  setIsSettingsModalOpen?: (open: boolean) => void;
   onCommentClick?: (channel: Channel) => void;
   handleVote?: (id: string, type: 'like' | 'dislike', e: React.MouseEvent) => void;
   handleBookmarkToggle?: (id: string, e: React.MouseEvent) => void;
@@ -471,7 +470,7 @@ const MobileFeedCard = ({ channel, isActive, onChannelClick, language, preferred
 };
 
 export const PodcastFeed: React.FC<PodcastFeedProps> = ({ 
-  channels, onChannelClick, onStartLiveSession, userProfile, globalVoice, onRefresh, currentUser, setChannelToEdit, setIsSettingsModalOpen, onCommentClick, handleVote, handleBookmarkToggle, searchQuery, setSearchQuery, onNavigate, onUpdateChannel, onOpenPricing, language, t, onMagicCreate, onOpenManual
+  channels, onChannelClick, onStartLiveSession, userProfile, globalVoice, onRefresh, currentUser, setChannelToEdit, onCommentClick, handleVote, handleBookmarkToggle, searchQuery, setSearchQuery, onNavigate, onUpdateChannel, onOpenPricing, language, t, onMagicCreate, onOpenManual
 }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'table' | 'mobile'>(() => window.innerWidth < 768 ? 'mobile' : 'grid');
   const lastNonMobileMode = useRef<'grid' | 'table'>('grid');
@@ -634,7 +633,6 @@ export const PodcastFeed: React.FC<PodcastFeedProps> = ({
                             currentUser={currentUser} 
                             userProfile={userProfile}
                             setChannelToEdit={setChannelToEdit || (()=>{})}
-                            setIsSettingsModalOpen={setIsSettingsModalOpen || (()=>{})}
                             globalVoice={globalVoice}
                             t={t}
                             onCommentClick={onCommentClick || (()=>{})}

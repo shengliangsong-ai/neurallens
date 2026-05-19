@@ -1,0 +1,33 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" }
+      }
+    },
+    "TestTable": {
+      "title": "Test Table",
+      "description": "For performance testing",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "value": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles collection"
+    },
+    "/test_table/{docId}": {
+      "schema": { "$ref": "#/entities/TestTable" },
+      "description": "Performance testing table"
+    }
+  }
+}

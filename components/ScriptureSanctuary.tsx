@@ -1,8 +1,9 @@
+import { getAIClient } from '../utils/aiConfig';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { GoogleGenAI } from '@google/genai';
 import { 
   ArrowLeft, BookOpen, Scroll, Loader2, Play, Square, Pause, 
-  Sparkles, Wand2, RefreshCw, RefreshCcw, BrainCircuit, Library, Lock, Palette, Cpu, Music, User, GraduationCap, Database, ChevronRight, ChevronDown, Bookmark, Search,
+  Sparkles, Wand2, RefreshCw, RefreshCcw, BrainCircuit, Library, EyeOff, Palette, Cpu, Music, User, GraduationCap, Database, ChevronRight, ChevronDown, Bookmark, Search,
   AlertCircle, Terminal, Maximize2, Minimize2, Volume2,
   LayoutGrid, ChevronLeft, Hash, Grid3X3, Info, SkipBack, SkipForward, Zap, Speaker, Settings2, Check, Globe, CloudCheck, CloudOff, CloudDownload, Radio,
   Bug, Film, X
@@ -10,8 +11,8 @@ import {
 // Fix: Added missing 'db' import for Firestore operations
 import { auth, storage, db } from '../services/firebaseConfig';
 // Fix: Added missing Firestore modular imports for ledger scanning
-import { collection, query, where, getDocs } from '@firebase/firestore';
-import { ref, listAll, getDownloadURL } from '@firebase/storage';
+import { collection, query, where, getDocs } from '../services/localFirestoreAdapter';
+import { ref, listAll, getDownloadURL } from '/services/mockStorage';
 import { saveScriptureToLedger, getScriptureFromLedger, getScriptureAudioUrl } from '../services/firestoreService';
 import { DualVerse } from '../types';
 import { getGlobalAudioContext, warmUpAudioContext, registerAudioOwner, connectOutput, syncPrimeSpeech } from '../utils/audioUtils';
@@ -231,7 +232,7 @@ export const ScriptureSanctuary: React.FC<ScriptureSanctuaryProps> = ({ onBack, 
 
       dispatchLog(`Ledger Miss. Activating Neural Core for ${book} ${chapter}...`, 'info');
 
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = getAIClient();
       const response = await ai.models.generateContentStream({
         model: 'gemini-3-flash-preview',
         contents: `Generate all verses of ${book} chapter ${chapter}. Output format strictly: VerseNumber | EnglishText | ChineseText. One verse per line. No headers.`,

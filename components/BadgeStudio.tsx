@@ -1,6 +1,7 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { ArrowLeft, Camera, Upload, Download, Sparkles, ShieldCheck, QrCode, User, RefreshCw, X, Loader2, Shield, Lock, Fingerprint, Palette, Zap, Check, Info, Share2, Link, Globe, AlertTriangle, Clock, History, LayoutGrid, Trash2, Activity, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Camera, Upload, Download, Sparkles, ShieldCheck, QrCode, User, RefreshCw, X, Loader2, Shield, EyeOff, Fingerprint, Palette, Zap, Check, Info, Share2, Link, Globe, AlertTriangle, Clock, History, LayoutGrid, Trash2, Activity, ChevronRight } from 'lucide-react';
 import { UserProfile, BadgeData } from '../types';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -104,7 +105,7 @@ export const BadgeStudio: React.FC<BadgeStudioProps> = ({ onBack, userProfile, o
     if (!userProfile) return;
     setIsGeneratingWatermark(true);
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         const prompt = `A highly detailed, intricate security watermark seal for a digital ID card. 
         Theme: Neural networking, futuristic data prism, high security. 
         Include artistic representations of: "MEMBER ID ${userProfile.uid.substring(0, 8)}". 
@@ -363,7 +364,7 @@ export const BadgeStudio: React.FC<BadgeStudioProps> = ({ onBack, userProfile, o
                           </div>
                       ) : (
                           <div className="h-full w-full flex flex-col p-10 text-center relative bg-[#020617] [transform:rotateY(180deg)] animate-fade-in">
-                              <div className="space-y-2 mb-10 shrink-0"><h3 className="text-lg font-black text-white uppercase italic tracking-tighter flex items-center justify-center gap-2"><Lock size={16} className="text-indigo-400"/> Cryptographic Shard</h3><p className="text-[9px] text-slate-500 leading-relaxed font-bold uppercase tracking-widest">Scan to verify sovereign identity signature offline</p></div>
+                              <div className="space-y-2 mb-10 shrink-0"><h3 className="text-lg font-black text-white uppercase italic tracking-tighter flex items-center justify-center gap-2"><EyeOff size={16} className="text-indigo-400"/> Cryptographic Shard</h3><p className="text-[9px] text-slate-500 leading-relaxed font-bold uppercase tracking-widest">Scan to verify sovereign identity signature offline</p></div>
                               <div className="flex-1 flex flex-col items-center justify-center"><div className="bg-white p-4 rounded-[2rem] shadow-2xl relative group"><img src={qrCodeUrl} className="w-48 h-48" alt="Identity Shard" /><div className="absolute inset-0 bg-indigo-600/5 group-hover:bg-indigo-600/10 transition-colors pointer-events-none rounded-[2rem]"></div></div><p className="text-[8px] font-mono text-slate-600 mt-6 break-all max-w-[200px] leading-tight">SHA-256_{userProfile?.certificate?.substring(10, 50)}...</p></div>
                               <div className="mt-10 space-y-6 pt-10 border-t border-white/5"><div className="flex justify-center grayscale opacity-60"><img src={barcodeUrl} className="h-10 w-full object-contain" alt="System Serial" /></div><div className="flex justify-between items-end"><div className="text-left"><p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Issue Date</p><p className="text-[10px] font-mono text-white">{new Date().toLocaleDateString()}</p></div><div className="text-right"><p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Binding ID</p><p className="text-[10px] font-mono text-white">#SYN-882-NP</p></div></div></div>
                           </div>

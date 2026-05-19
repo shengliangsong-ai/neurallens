@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Search, Check, Globe, Lock, Copy, Send, User, Loader2, Users, Eye, Edit3 } from 'lucide-react';
+import { X, Search, Check, Globe, EyeOff, Copy, Send, User, Loader2, Users, Eye, Edit3 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { getAllUsers } from '../services/firestoreService';
 
@@ -133,7 +133,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                         onClick={() => setAccessLevel('restricted')}
                         className={`flex-1 py-2 text-xs font-bold rounded-md flex items-center justify-center gap-2 transition-colors ${accessLevel === 'restricted' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`}
                     >
-                        <Lock size={14} /> Restricted
+                        <EyeOff size={14} /> Restricted
                     </button>
                 </div>
             </div>

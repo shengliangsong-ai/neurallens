@@ -3,7 +3,7 @@ import {
   Terminal, Code, Video, LayoutGrid, FileText, Wallet, MessageSquare, 
   Briefcase, Truck, AppWindow, Book, PenTool, Rss, Gift, Rocket, BookOpen, 
   Activity, Scroll, GraduationCap, Cpu, Star, Coins, Zap, ShieldCheck,
-  Globe, Users, Clock, Sparkles, ChevronRight, Crown, Lock, Radio,
+  Globe, Users, Clock, Sparkles, ChevronRight, Crown, EyeOff, Radio,
   Disc, Calendar, History, FolderOpen, BookText, FileUp, FileSignature, IdCard, Info, TrendingUp, BarChart3, Binary, Github, Scale, Thermometer, Shield, Play, Layout, UserCircle, Target, Beaker, Database, Repeat, Ghost
 } from 'lucide-react';
 import { ViewID, UserProfile, PlatformMetrics } from '../types';
@@ -20,7 +20,7 @@ interface DashboardProps {
 
 const UI_TEXT = {
   en: {
-    greeting: "Welcome to the Hub,",
+    greeting: "Welcome back,",
     status: "Neural Link Status: Active",
     balance: "Assets",
     discoverySector: "Discovery & Knowledge",
@@ -310,13 +310,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ userProfile, isProMember, 
                             onClick={() => onNavigate(app.id as ViewID)} 
                             className="flex flex-col items-center p-6 bg-slate-900 border border-slate-800 rounded-[2.5rem] hover:border-indigo-500/50 hover:bg-indigo-900/10 transition-all text-center group shadow-xl relative overflow-hidden h-full"
                         >
-                            {!isProMember && app.restricted && (
-                                <div className="absolute top-4 right-4 z-20 pointer-events-none">
-                                    <div className="p-1.5 bg-slate-900/90 border border-amber-500/50 rounded-lg shadow-2xl backdrop-blur-md">
-                                        <Lock size={12} className="text-amber-500" />
-                                    </div>
-                                </div>
-                            )}
+
 
                             <div className="absolute inset-0 bg-indigo-900/95 backdrop-blur-md flex flex-col items-center justify-center p-6 z-30 transition-all duration-300 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
                                 <p className="text-[10px] font-bold text-white leading-relaxed mb-4">{app.description}</p>

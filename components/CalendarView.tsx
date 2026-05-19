@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Channel, Booking, TodoItem } from '../types';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, Briefcase, Plus, Video, CheckCircle, X, Users, Loader2, Mic, Play, Mail, Sparkles, ArrowLeft, Monitor, Filter, LayoutGrid, List, Languages, CloudSun, Wind, BookOpen, CheckSquare, Square, Trash2, StopCircle, Download, FileText, Check, Podcast, RefreshCw, Share2, Target, ExternalLink, Circle, Edit3, Timer, Lock, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, Briefcase, Plus, Video, CheckCircle, X, Users, Loader2, Mic, Play, Mail, Sparkles, ArrowLeft, Monitor, Filter, LayoutGrid, List, Languages, CloudSun, Wind, BookOpen, CheckSquare, Square, Trash2, StopCircle, Download, FileText, Check, Podcast, RefreshCw, Share2, Target, ExternalLink, Circle, Edit3, Timer, EyeOff, Info } from 'lucide-react';
 import { ChannelCard } from './ChannelCard';
 // Fixed: removed non-existent and unused exports
 import { getUserBookings, createBooking } from '../services/firestoreService';
@@ -15,7 +15,6 @@ interface CalendarViewProps {
   handleVote: (id: string, type: 'like' | 'dislike', e: React.MouseEvent) => void;
   currentUser: any;
   setChannelToEdit: (channel: Channel) => void;
-  setIsSettingsModalOpen: (open: boolean) => void;
   globalVoice: string;
   t: any;
   onCommentClick: (channel: Channel) => void;
@@ -34,7 +33,7 @@ const getDateKey = (date: Date | number | string) => {
 };
 
 export const CalendarView: React.FC<CalendarViewProps> = ({
-  channels, handleChannelClick, handleVote, currentUser, setChannelToEdit, setIsSettingsModalOpen, globalVoice, t, onCommentClick, onStartLiveSession, onCreateChannel, onSchedulePodcast, onOpenManual
+  channels, handleChannelClick, handleVote, currentUser, setChannelToEdit, globalVoice, t, onCommentClick, onStartLiveSession, onCreateChannel, onSchedulePodcast, onOpenManual
 }) => {
   const [displayDate, setDisplayDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -245,7 +244,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       <div key={b.id} className="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex items-center gap-4 group hover:border-indigo-500/50 transition-all relative overflow-hidden">
                           {isParticipant && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500"></div>}
                           <div className={`p-3 rounded-xl transition-transform group-hover:scale-110 ${isParticipant ? 'bg-indigo-900/20 text-indigo-400' : 'bg-slate-800 text-slate-600'}`}>
-                             {isParticipant ? <Clock size={20}/> : <Lock size={20}/>}
+                             {isParticipant ? <Clock size={20}/> : <EyeOff size={20}/>}
                           </div>
                           <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">

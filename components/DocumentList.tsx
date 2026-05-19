@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CommunityDiscussion } from '../types';
 import { getUserDesignDocs, deleteDiscussion, getPublicDesignDocs, getGroupDesignDocs, getUserProfile } from '../services/firestoreService';
-import { FileText, ArrowRight, Loader2, MessageSquare, Plus, ShieldCheck, Trash2, Info, FileCode, Globe, Users, Lock, User, AlertCircle, Sparkles } from 'lucide-react';
+import { FileText, ArrowRight, Loader2, MessageSquare, Plus, ShieldCheck, Trash2, Info, FileCode, Globe, Users, EyeOff, User, AlertCircle, Sparkles } from 'lucide-react';
 import { auth } from '../services/firebaseConfig';
 import { DiscussionModal } from './DiscussionModal';
 import { APP_COMPARISON_DOC, STACK_STORY_DOC, BUILT_WITH_DOC } from '../utils/docContent';

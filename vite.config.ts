@@ -13,9 +13,6 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     define: {
-      // This shim allows the code to access the API key via process.env.API_KEY
-      // prioritizing the system environment variable over local .env files
-      'process.env.API_KEY': JSON.stringify(process.env.API_KEY || env.VITE_GEMINI_API_KEY || '')
     },
     server: {
       port: port,

@@ -1,6 +1,7 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ArrowLeft, Play, Trash2, Loader2, Activity, Zap, Lock, Terminal, ShieldCheck, RefreshCw, Layers, BrainCircuit, Code, Info, ChevronRight, Share2, Download, Maximize2, Move, RotateCw, ZoomIn, ZoomOut, Sliders, Target, Crosshair, Plus } from 'lucide-react';
+import { ArrowLeft, Play, Trash2, Loader2, Activity, Zap, EyeOff, Terminal, ShieldCheck, RefreshCw, Layers, BrainCircuit, Code, Info, ChevronRight, Share2, Download, Maximize2, Move, RotateCw, ZoomIn, ZoomOut, Sliders, Target, Crosshair, Plus } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
 interface GraphStudioProps {
@@ -27,19 +28,7 @@ interface Equation {
 }
 
 export const GraphStudio: React.FC<GraphStudioProps> = ({ onBack, isProMember, onOpenManual }) => {
-  if (isProMember === false) {
-    return (
-        <div className="h-full flex items-center justify-center p-6 bg-slate-950">
-            <div className="max-w-md w-full bg-slate-900 border border-indigo-500/30 rounded-[3rem] p-12 text-center shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-32 bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none"></div>
-                <Lock size={48} className="text-indigo-400 mx-auto mb-6 relative z-10" />
-                <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-4 relative z-10">Pro Access Required</h2>
-                <p className="text-slate-400 text-sm mb-10 font-medium relative z-10">Neural 3D Studio requires an active Pro Membership to handle high-performance mathematical refractions and multi-system coordinate simulation.</p>
-                <button onClick={onBack} className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all relative z-10">Back to Hub</button>
-            </div>
-        </div>
-    );
-  }
+
 
   // --- State ---
   const [mode, setMode] = useState<GraphMode>('2d');
@@ -79,42 +68,47 @@ export const GraphStudio: React.FC<GraphStudioProps> = ({ onBack, isProMember, o
     setIsCompiling(true);
     addLog(`Initializing ${mode.toUpperCase()} Compiler...`, "info");
     
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const updated = [...equations];
+    try {
+        const ai = getAIClient();
+        const updated = [...equations];
 
-    for (let i = 0; i < updated.length; i++) {
-        const eq = updated[i];
-        if (!eq.expression.trim()) continue;
+        for (let i = 0; i < updated.length; i++) {
+            const eq = updated[i];
+            if (!eq.expression.trim()) continue;
 
-        try {
-            addLog(`Refracting: ${eq.expression}`, "input");
-            
-            let signature = " (x) => numeric value ";
-            if (mode === '3d') signature = " (x, y) => numeric z value ";
-            if (mode === 'polar') signature = " (theta) => numeric r value ";
+            try {
+                addLog(`Refracting: ${eq.expression}`, "input");
+                
+                let signature = " (x) => numeric value ";
+                if (mode === '3d') signature = " (x, y) => numeric z value ";
+                if (mode === 'polar') signature = " (theta) => numeric r value ";
 
-            const prompt = `Convert this ${mode.toUpperCase()} math expression to a valid JavaScript arrow function using the 'Math' object. 
-            The function signature MUST be: ${signature}
-            Expression: "${eq.expression}"
-            Return ONLY the code string. Example: " (x) => Math.sin(x) "`;
+                const prompt = `Convert this ${mode.toUpperCase()} math expression to a valid JavaScript arrow function using the 'Math' object. 
+                The function signature MUST be: ${signature}
+                Expression: "${eq.expression}"
+                Return ONLY the code string. Example: " (x) => Math.sin(x) "`;
 
-            const response = await ai.models.generateContent({
-                model: 'gemini-3-flash-preview',
-                contents: prompt,
-                config: { thinkingConfig: { thinkingBudget: 0 } }
-            });
+                const response = await ai.models.generateContent({
+                    model: 'gemini-3-flash-preview',
+                    contents: prompt,
+                    config: { thinkingConfig: { thinkingBudget: 0 } }
+                });
 
-            const code = response.text?.trim() || "() => 0";
-            const fn = new Function('return ' + code)();
-            updated[i] = { ...eq, fn };
-            addLog(`${mode.toUpperCase()} Logic verified.`, "output");
-        } catch (e: any) {
-            addLog(`Refraction Error: ${e.message}`, "error");
+                const code = response.text?.trim() || "() => 0";
+                const fn = new Function('return ' + code)();
+                updated[i] = { ...eq, fn };
+                addLog(`${mode.toUpperCase()} Logic verified.`, "output");
+            } catch (e: any) {
+                addLog(`Refraction Error: ${e.message}`, "error");
+            }
         }
-    }
 
-    setEquations(updated);
-    setIsCompiling(false);
+        setEquations(updated);
+    } catch (e: any) {
+        addLog(`System Error: ${e.message}`, "error");
+    } finally {
+        setIsCompiling(false);
+    }
   };
 
   // --- Multi-System Rendering Engine ---

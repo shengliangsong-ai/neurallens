@@ -92,7 +92,7 @@ export const ResumeView: React.FC<ResumeViewProps> = ({ onBack, currentUser, use
       period: 'Dec 2016 - Jan 2020',
       location: 'East Palo Alto, CA',
       bullets: [
-        'Trained Primary-On-Call engineers on DDL Recovery and MySQL Metadata Lock issues through hands-on exercises, enhancing their technical proficiency.',
+        'Trained Primary-On-Call engineers on DDL Recovery and MySQL Metadata EyeOff issues through hands-on exercises, enhancing their technical proficiency.',
         'Contributed to various projects including Aurora Fast DDL features, Porting from MySQL 5.6 to 5.7, Parallel-Query processing, and multi-master DDL features.'
       ]
     },

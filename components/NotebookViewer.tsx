@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Book, Play, Terminal, MoreVertical, Plus, Edit3, Trash2, Cpu, Share2, Sparkles, Loader2, Save, Image as ImageIcon, X, ChevronUp, ChevronDown, Check, Zap, Wand2, Link, Info } from 'lucide-react';
 import { Notebook, NotebookCell } from '../types';
@@ -65,7 +66,7 @@ export const NotebookViewer: React.FC<NotebookViewerProps> = ({ onBack, currentU
       setActiveNotebook({ ...activeNotebook, cells: updatedCells });
 
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+          const ai = getAIClient();
           
           // Construct Context from previous cells
           const context = activeNotebook.cells

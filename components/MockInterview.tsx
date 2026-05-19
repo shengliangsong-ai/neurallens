@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { MockInterviewRecording, TranscriptItem, CodeFile, UserProfile, Channel, RecordingSession } from '../types';
@@ -12,7 +13,7 @@ import {
   saveRecordingReference,
   saveProjectToCloud
 } from '../services/firestoreService';
-import { doc, updateDoc } from '@firebase/firestore';
+import { doc, updateDoc } from '../services/localFirestoreAdapter';
 import { GeminiLiveService } from '../services/geminiLive';
 import { GoogleGenAI, Type } from "@google/genai";
 import { generateSecureId, safeJsonStringify } from '../utils/idUtils';
@@ -27,7 +28,7 @@ import {
   Cpu, HeartHandshake, ChevronDown, Check, Scissors,
   FileCode, ExternalLink as ExternalLinkIcon, CodeSquare as CodeIcon,
   ShieldCheck, Target, Award as AwardIcon,
-  Lock, Activity, Layers, RefreshCw, Monitor, Camera, Youtube, HardDrive,
+  EyeOff, Activity, Layers, RefreshCw, Monitor, Camera, Youtube, HardDrive,
   UserCheck, Shield, GraduationCap, PlayCircle, ExternalLink, Copy, Share2, SearchX,
   Play, Link, CloudUpload, HardDriveDownload, List, Table as TableIcon, FileVideo, Calendar, Download, Maximize2, Maximize, Info, Minimize2,
   FileText, FileText as FileTextIcon, Image as ImageIcon, Ghost, Eye, Database, TerminalSquare, FlaskConical, Beaker, Upload, Droplets, Signal
@@ -672,7 +673,7 @@ export const MockInterview: React.FC<MockInterviewProps> = ({ onBack, userProfil
       }
 
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+          const ai = getAIClient();
           const transcriptStr = transcriptRef.current.map(t => `${t.role.toUpperCase()}: ${t.text}`).join('\n');
           const finalFilesStr = filesRef.current.map(f => `FILE: ${f.name}\nCONTENT:\n${f.content}`).join('\n\n');
           
@@ -698,7 +699,7 @@ export const MockInterview: React.FC<MockInterviewProps> = ({ onBack, userProfil
           `;
 
           const res = await ai.models.generateContent({
-              model: 'gemini-3-pro-preview',
+              model: 'gemini-3.1-pro-preview',
               contents: prompt,
               config: { 
                   responseMimeType: 'application/json',
@@ -1158,7 +1159,7 @@ export const MockInterview: React.FC<MockInterviewProps> = ({ onBack, userProfil
 
     setIsHydratingArchive(true);
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         const transcriptStr = (rec.transcript || []).map(t => `${t.role.toUpperCase()}: ${t.text}`).join('\n');
         
         const prompt = `Synthesize the detailed technical report for this historical interview.
@@ -1167,7 +1168,7 @@ export const MockInterview: React.FC<MockInterviewProps> = ({ onBack, userProfil
         Fields: score (num), technicalSkills (str), communication (str), collaboration (str), strengths (arr), areasForImprovement (arr), verdict (str), summary (str), shadowAudit (md), learningMaterial (md).`;
 
         const res = await ai.models.generateContent({
-            model: 'gemini-3-pro-preview',
+            model: 'gemini-3.1-pro-preview',
             contents: prompt,
             config: { 
                 responseMimeType: 'application/json',

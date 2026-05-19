@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { ArrowLeft, ShieldCheck, Lock, User, Clock, QrCode, Loader2, AlertTriangle, Fingerprint, Shield, Share2, Download, Info } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, EyeOff, User, Clock, QrCode, Loader2, AlertTriangle, Fingerprint, Shield, Share2, Download, Info } from 'lucide-react';
 import { BadgeData } from '../types';
 import { getBadge } from '../services/firestoreService';
 
@@ -164,7 +164,7 @@ export const BadgeViewer: React.FC<BadgeViewerProps> = ({ onBack, badgeId }) => 
             >
               <div className="space-y-2 mb-8 shrink-0">
                 <h3 className="text-lg font-black text-white uppercase italic tracking-tighter flex items-center justify-center gap-2">
-                  <Lock size={16} className="text-indigo-400"/> Cryptographic Shard
+                  <EyeOff size={16} className="text-indigo-400"/> Cryptographic Shard
                 </h3>
                 <p className="text-[9px] text-slate-500 leading-relaxed font-bold uppercase tracking-widest">Verification Registry Artifact</p>
               </div>

@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ArrowLeft, Camera, Upload, ShieldCheck, ShieldAlert, Loader2, User, Check, X, FileText, Info, Fingerprint, Zap, Sparkles, Activity, Target, HardDrive, RefreshCw, Download, ZoomIn, ZoomOut, RotateCw, Move, Maximize, Scissors, AlertCircle, Calendar, CheckCircle } from 'lucide-react';
@@ -111,7 +112,7 @@ export const IdentityLab: React.FC<IdentityLabProps> = ({ onBack, userProfile, o
       dispatchLog("Phase 1: Dispatching image for spatial detection.", "info", { mass_kb: Math.round(b64.length / 1024) });
       
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+          const ai = getAIClient();
           const response = await ai.models.generateContent({
               model: 'gemini-3-flash-preview',
               contents: {
@@ -217,7 +218,7 @@ export const IdentityLab: React.FC<IdentityLabProps> = ({ onBack, userProfile, o
     dispatchLog("Starting high-fidelity parity audit.", "info");
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = getAIClient();
       const currentDate = new Date().toISOString().split('T')[0];
 
       // Phase 1: Metadata Extraction and Identity Validation (Flash)
@@ -250,7 +251,7 @@ export const IdentityLab: React.FC<IdentityLabProps> = ({ onBack, userProfile, o
       // Phase 2: Head-to-Head Biometric Comparison (Pro)
       setProcessStatus("Phase 2: Executing Retina Mesh Audit...");
       const proResponse = await ai.models.generateContent({
-        model: 'gemini-3-pro-image-preview',
+        model: 'gemini-3.1-pro-preview',
         contents: {
           parts: [
             { text: "Trimmed Passport/ID Face Shard:" },

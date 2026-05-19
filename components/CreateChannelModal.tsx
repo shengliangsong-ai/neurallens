@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Channel, Group, Chapter } from '../types';
 // Fixed: ShieldSearch does not exist in lucide-react, replaced with SearchCheck
-import { X, Podcast, Sparkles, Lock, Globe, Users, FileText, Loader2, Crown, Calendar, Star, Zap, Cpu, Link as LinkIcon, Globe2, AlertCircle, CheckCircle, SearchCheck, BarChart3, SearchCode } from 'lucide-react';
+import { X, Podcast, Sparkles, EyeOff, Globe, Users, FileText, Loader2, Crown, Calendar, Star, Zap, Cpu, Link as LinkIcon, Globe2, AlertCircle, CheckCircle, SearchCheck, BarChart3, SearchCode } from 'lucide-react';
 import { getUserGroups, getUserProfile } from '../services/firestoreService';
 import { generateChannelFromDocument } from '../services/channelGenerator';
 import { auth } from '../services/firebaseConfig';
@@ -209,7 +209,7 @@ export const CreateChannelModal: React.FC<CreateChannelModalProps> = ({ isOpen, 
                     {!isPro && <span className="text-[9px] text-amber-400 font-bold flex items-center gap-1 uppercase tracking-tighter"><Crown size={10}/> Pro Only</span>}
                 </div>
                 <div className="flex gap-2">
-                    <button type="button" disabled={!isPro} onClick={() => setVisibility('private')} className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase flex items-center justify-center space-x-2 border transition-all ${visibility === 'private' ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg' : !isPro ? 'bg-slate-900 border-slate-800 text-slate-700 cursor-not-allowed opacity-40' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}`}><Lock size={12} /><span>Private</span></button>
+                    <button type="button" disabled={!isPro} onClick={() => setVisibility('private')} className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase flex items-center justify-center space-x-2 border transition-all ${visibility === 'private' ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg' : !isPro ? 'bg-slate-900 border-slate-800 text-slate-700 cursor-not-allowed opacity-40' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}`}><EyeOff size={12} /><span>Private</span></button>
                     <button type="button" onClick={() => setVisibility('public')} className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase flex items-center justify-center space-x-2 border transition-all ${visibility === 'public' ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}`}><Globe size={12} /><span>Public</span></button>
                 </div>
               </div>

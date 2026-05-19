@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Channel, ChannelStats, UserProfile } from '../types';
-import { Play, Heart, MessageSquare, Lock, Globe, Users, Edit, Share2, Bookmark, User, Zap } from 'lucide-react';
+import { Play, Heart, MessageSquare, EyeOff, Globe, Users, Edit, Share2, Bookmark, User, Zap } from 'lucide-react';
 import { OFFLINE_CHANNEL_ID } from '../utils/offlineContent';
 import { shareChannel, subscribeToChannelStats, isUserAdmin } from '../services/firestoreService';
 import { SPECIALIZED_VOICES } from '../utils/initialData';
@@ -12,7 +12,6 @@ interface ChannelCardProps {
   currentUser: any;
   userProfile?: UserProfile | null;
   setChannelToEdit: (channel: Channel) => void;
-  setIsSettingsModalOpen: (open: boolean) => void;
   globalVoice: string;
   t: any;
   onCommentClick: (channel: Channel) => void;
@@ -24,7 +23,7 @@ interface ChannelCardProps {
 
 export const ChannelCard: React.FC<ChannelCardProps> = ({ 
   channel, handleChannelClick, handleVote, currentUser, userProfile,
-  setChannelToEdit, setIsSettingsModalOpen, globalVoice, t,
+  setChannelToEdit, globalVoice, t,
   onCommentClick, isLiked = false, isBookmarked = false, onBookmarkToggle, onCreatorClick
 }) => {
   const isOwner = currentUser && (channel.ownerId === currentUser.uid || isUserAdmin(userProfile || null));
@@ -106,7 +105,7 @@ export const ChannelCard: React.FC<ChannelCardProps> = ({
       className={`group relative bg-slate-900 border ${channel.id === OFFLINE_CHANNEL_ID ? 'border-indigo-500/50 shadow-indigo-500/20 shadow-lg' : 'border-slate-800'} rounded-xl overflow-hidden hover:border-indigo-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10 cursor-pointer flex flex-col`}
     >
       <div className="absolute top-2 right-2 z-10 flex gap-1">
-          {channel.visibility === 'private' && <div className="bg-slate-900/80 p-1 rounded-full text-slate-400" title="Private"><Lock size={12}/></div>}
+          {channel.visibility === 'private' && <div className="bg-slate-900/80 p-1 rounded-full text-slate-400" title="Private"><EyeOff size={12}/></div>}
           {channel.visibility === 'public' && <div className="bg-emerald-900/80 p-1 rounded-full text-emerald-400" title="Public"><Globe size={12}/></div>}
           {channel.visibility === 'group' && <div className="bg-purple-900/80 p-1 rounded-full text-purple-400" title="Group Only"><Users size={12}/></div>}
       </div>
@@ -126,7 +125,6 @@ export const ChannelCard: React.FC<ChannelCardProps> = ({
                onClick={(e) => {
                   e.stopPropagation();
                   setChannelToEdit(channel);
-                  setIsSettingsModalOpen(true);
                }}
                className="p-1.5 bg-slate-900/80 rounded-full text-slate-300 hover:text-white hover:bg-indigo-600 transition-colors"
                title="Edit Channel"

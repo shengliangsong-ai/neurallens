@@ -3,8 +3,8 @@ import {
   collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc, query, where, 
   orderBy, limit, onSnapshot, runTransaction, increment, arrayUnion, arrayRemove, 
   Timestamp, writeBatch
-} from '@firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from '@firebase/storage';
+} from './localFirestoreAdapter';
+import { ref, uploadBytes, getDownloadURL } from '/services/mockStorage';
 import { db, auth, storage } from './firebaseConfig';
 import { 
   UserProfile, Channel, Comment, Attachment, Group, ChatChannel, RealTimeMessage, 
@@ -127,7 +127,16 @@ export async function getCloudAudioUrl(channelId: string, topicId: string, nodeI
 
 // --- REMAINING FIRESTORE SERVICES ---
 export async function uploadFileToStorage(path: string, file: Blob | File): Promise<string> {
-    if (!storage) throw new Error("Storage unavailable");
+    if (storage?.__isLocal) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64data = reader.result as string;
+                resolve(base64data);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
     const storageRef = ref(storage, path);
     await uploadBytes(storageRef, file);
     return await getDownloadURL(storageRef);

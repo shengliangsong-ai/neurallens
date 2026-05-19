@@ -11,7 +11,7 @@ import {
   Check, FileSignature, Stamp, Shield, User, PenTool, Edit, AlignLeft, ShieldAlert,
   Maximize, Info as InfoIcon, Fingerprint as FingerprintIcon
 } from 'lucide-react';
-import { collection, query, getDocs, limit, orderBy, where } from '@firebase/firestore';
+import { collection, query, getDocs, limit, orderBy, where } from '../services/localFirestoreAdapter';
 import { db, auth } from '../services/firebaseConfig';
 import { GeneratedLecture, Channel, SubTopic, NeuralLensAudit, DependencyNode, DependencyLink, UserProfile } from '../types';
 import { SYSTEM_AUDIT_NODES } from '../utils/auditContent';

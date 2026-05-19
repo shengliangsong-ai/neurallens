@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { X, MessageCircle, FileText, Loader2, Edit2, Save, Sparkles, Cloud, Trash2, RefreshCw, Info, Lock, Globe, Users, ChevronDown, Check, Download, Image as ImageIcon, FileCode, Type, Play, Pause, Speaker, Volume2 } from 'lucide-react';
+import { X, MessageCircle, FileText, Loader2, Edit2, Save, Sparkles, Cloud, Trash2, RefreshCw, Info, EyeOff, Globe, Users, ChevronDown, Check, Download, Image as ImageIcon, FileCode, Type, Play, Pause, Speaker, Volume2 } from 'lucide-react';
 import { CommunityDiscussion, Group, ChannelVisibility, UserProfile, TtsProvider } from '../types';
 import { getDiscussionById, subscribeToDiscussion, saveDiscussionDesignDoc, saveDiscussion, deleteDiscussion, updateDiscussionVisibility, getUserGroups, getUserProfile, isUserAdmin } from '../services/firestoreService';
 // Fix: removed redundant aliased import of generateDesignDocFromTranscript
@@ -344,7 +344,7 @@ export const DiscussionModal: React.FC<DiscussionModalProps> = ({
                       {isOwner && currentUser && (
                           <div className="relative">
                               <button onClick={() => setShowVisibilityMenu(!showVisibilityMenu)} className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold transition-all border border-slate-700">
-                                {activeDiscussion?.visibility === 'public' ? <Globe size={14} className="text-emerald-400"/> : activeDiscussion?.visibility === 'group' ? <Users size={14} className="text-purple-400"/> : <Lock size={14} className="text-slate-500"/>}
+                                {activeDiscussion?.visibility === 'public' ? <Globe size={14} className="text-emerald-400"/> : activeDiscussion?.visibility === 'group' ? <Users size={14} className="text-purple-400"/> : <EyeOff size={14} className="text-slate-500"/>}
                                 <span className="capitalize">{activeDiscussion?.visibility || 'Private'}</span>
                                 <ChevronDown size={12}/>
                               </button>
@@ -352,7 +352,7 @@ export const DiscussionModal: React.FC<DiscussionModalProps> = ({
                                   <>
                                     <div className="fixed inset-0 z-40" onClick={() => setShowVisibilityMenu(false)}></div>
                                     <div className="absolute top-full right-0 mt-1 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                                        <button onClick={() => { handleUpdateVisibility('private'); setShowVisibilityMenu(false); }} className="w-full text-left px-4 py-2 hover:bg-slate-700 text-xs text-slate-300 flex items-center gap-2"><Lock size={12}/> Private</button>
+                                        <button onClick={() => { handleUpdateVisibility('private'); setShowVisibilityMenu(false); }} className="w-full text-left px-4 py-2 hover:bg-slate-700 text-xs text-slate-300 flex items-center gap-2"><EyeOff size={12}/> Private</button>
                                         <button onClick={() => { handleUpdateVisibility('public'); setShowVisibilityMenu(false); }} className="w-full text-left px-4 py-2 hover:bg-slate-700 text-xs text-emerald-400 flex items-center gap-2"><Globe size={12}/> Public</button>
                                         {userGroups.map(g => (<button key={g.id} onClick={() => { handleUpdateVisibility('group', g.id); setShowVisibilityMenu(false); }} className="w-full text-left px-4 py-2 hover:bg-slate-700 text-xs text-slate-300 flex items-center gap-2 truncate"><Users size={12}/> {g.name}</button>))}
                                     </div>

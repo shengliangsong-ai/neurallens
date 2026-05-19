@@ -4,7 +4,6 @@ import { base64ToBytes, decodeRawPcm, getGlobalAudioContext, hashString, syncPri
 import { getCachedAudioBuffer, cacheAudioBuffer } from '../utils/db';
 import { auth } from './firebaseConfig';
 import { deductCoins, AI_COSTS, saveAudioToLedger, getCloudAudioUrl, getUserProfile } from './firestoreService';
-import { OPENAI_API_KEY, GCP_API_KEY, GEMINI_API_KEY } from './private_keys';
 
 export type TtsProvider = 'gemini' | 'google' | 'system' | 'openai';
 export type TtsErrorType = 'none' | 'quota' | 'daily_limit' | 'network' | 'unknown' | 'auth' | 'unsupported' | 'voice_not_found';
@@ -63,8 +62,7 @@ async function synthesizeGemini(text: string, voice: string, lang: 'en' | 'zh' =
     // Check multiple potential sources for the key
     const sources = [
         getSanitizedKey(apiKey),
-        getSanitizedKey(GEMINI_API_KEY),
-        getSanitizedKey(process.env.API_KEY)
+        getSanitizedKey(getAIKey())
     ];
     
     const key = sources.find(k => k.length > 0);
@@ -116,8 +114,7 @@ async function synthesizeGemini(text: string, voice: string, lang: 'en' | 'zh' =
 async function synthesizeGoogle(text: string, voice: string, lang: 'en' | 'zh' = 'en', apiKey?: string): Promise<{buffer: ArrayBuffer, mime: string}> {
     const sources = [
         getSanitizedKey(apiKey),
-        getSanitizedKey(GCP_API_KEY),
-        getSanitizedKey(process.env.API_KEY)
+        getSanitizedKey(getAIKey())
     ];
     const key = sources.find(k => k.length > 0);
     
@@ -151,8 +148,7 @@ async function synthesizeGoogle(text: string, voice: string, lang: 'en' | 'zh' =
 
 async function synthesizeOpenAI(text: string, voice: string, lang: 'en' | 'zh' = 'en', apiKey?: string): Promise<{buffer: ArrayBuffer, mime: string}> {
     const sources = [
-        getSanitizedKey(apiKey),
-        getSanitizedKey(OPENAI_API_KEY)
+        getSanitizedKey(apiKey)
     ];
     const key = sources.find(k => k.length > 0);
     

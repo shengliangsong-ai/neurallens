@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
@@ -251,7 +252,7 @@ export const ScribeStudio: React.FC<ScribeStudioProps> = ({ onBack, currentUser,
     try {
         setIsSynthesizing(true);
         const fullText = finalHistory.map(h => h.text).join('\n');
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         
         const prompt = `You are a Senior Technical Scribe. Title: "${sessionTitle}". Reconstruct the following transcript into a high-fidelity technical specification. Summarize logic, architecture, and decisions.\n\nRAW DATA:\n${fullText}`;
 

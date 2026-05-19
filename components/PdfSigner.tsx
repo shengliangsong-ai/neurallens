@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { 
@@ -5,7 +6,7 @@ import {
   Trash2, HardDrive, Cloud, ShieldCheck, X, Check, MousePointer2, 
   Maximize2, PenTool, Type as TypeIcon, RefreshCw, ChevronRight, FileText, Info, Search,
   AlertCircle, SearchCode, ChevronLeft, FileCheck, FileCode, Droplet,
-  Fingerprint, Stamp, Move, CheckCircle2, Minus, ShieldAlert, Shield, ShieldQuestion, HelpCircle, Lock, Zap,
+  Fingerprint, Stamp, Move, CheckCircle2, Minus, ShieldAlert, Shield, ShieldQuestion, HelpCircle, EyeOff, Zap,
   User, Database, ArrowRight, QrCode, Scan, Smartphone, Activity, Send, Link, MessageSquare, Heart, GraduationCap, BarChart3, UserPlus
 } from 'lucide-react';
 import { PDFDocument, rgb, StandardFonts, PDFRawStream, PDFArray } from 'pdf-lib';
@@ -513,7 +514,7 @@ export const PdfSigner: React.FC<PdfSignerProps> = ({ onBack, currentUser, userP
 
         if (enableContentAudit) {
             dispatchLog("Neural Engine analyzing professional/academic quality...", "info");
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            const ai = getAIClient();
             
             // Extract text for analysis
             const targetPdf = await pdfjsLib.getDocument({ data: targetArrayBuffer }).promise;

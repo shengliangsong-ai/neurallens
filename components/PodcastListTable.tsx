@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Channel, UserProfile } from '../types';
-import { ArrowUp, ArrowDown, Play, MessageSquare, Heart, Calendar, Hash, RefreshCcw, Loader2, ShieldCheck, Edit3, Clock, Globe, Lock, Users, Zap, Activity } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, MessageSquare, Heart, Calendar, Hash, RefreshCcw, Loader2, ShieldCheck, Edit3, Clock, Globe, EyeOff, Users, Zap, Activity } from 'lucide-react';
 import { isUserAdmin } from '../services/firestoreService';
 
 export type SortKey = 'title' | 'voiceName' | 'likes' | 'createdAt' | 'author';

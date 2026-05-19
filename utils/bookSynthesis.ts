@@ -1,3 +1,4 @@
+import { getAIClient } from '../utils/aiConfig';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { GoogleGenAI } from '@google/genai';
@@ -68,7 +69,7 @@ const renderMathInHtml = (text: string) => {
 async function generateChapterSummary(ch: Chapter, language: 'en' | 'zh'): Promise<string> {
     const t = UI_TEXT[language];
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = getAIClient();
         const langText = language === 'zh' ? '使用简体中文输出。' : 'Output in English.';
         const prompt = `Write a technical 2-sentence executive summary for a book chapter titled "${ch.title}". ${langText} Focus on the core architectural takeaways. Maximum 50 words.`;
         const res = await ai.models.generateContent({

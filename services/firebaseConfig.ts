@@ -1,13 +1,27 @@
 
-import { initializeApp, getApps } from "@firebase/app";
-import type { FirebaseApp } from "@firebase/app";
-import { getAuth, setPersistence, browserLocalPersistence } from "@firebase/auth";
-import type { Auth } from "@firebase/auth";
-import { initializeFirestore, getFirestore, enableIndexedDbPersistence, CACHE_SIZE_UNLIMITED } from "@firebase/firestore";
-import type { Firestore } from "@firebase/firestore";
-import { getStorage } from "@firebase/storage";
-import type { FirebaseStorage } from "@firebase/storage";
-import { firebaseKeys } from './private_keys';
+import { initializeApp, getApps } from '/services/mockApp';
+import type { FirebaseApp } from '/services/mockApp';
+import { getAuth, setPersistence, browserLocalPersistence } from '/services/mockAuth';
+import type { Auth } from '/services/mockAuth';
+import { initializeFirestore, getFirestore, enableIndexedDbPersistence, CACHE_SIZE_UNLIMITED } from '/services/localFirestoreAdapter';
+import type { Firestore } from '/services/localFirestoreAdapter';
+import { getStorage } from '/services/mockStorage';
+import type { FirebaseStorage } from '/services/mockStorage';
+// Import config safely using import.meta.glob to avoid build errors if the file is missing (e.g. on GitHub)
+const configModules = import.meta.glob('../firebase-applet-config.json', { eager: true });
+const configKey = Object.keys(configModules)[0];
+
+const envConfig = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    firestoreDatabaseId: import.meta.env.VITE_FIREBASE_DATABASE_ID
+};
+
+const firebaseConfig = configKey ? (configModules[configKey] as any).default : envConfig;
 
 /**
  * Standard Firebase Initialization
@@ -19,12 +33,8 @@ const initializeFirebase = (): FirebaseApp | null => {
             return existingApps[0];
         }
 
-        if (firebaseKeys && firebaseKeys.apiKey && firebaseKeys.apiKey !== "YOUR_BASE_API_KEY") {
-            const config = {
-                ...firebaseKeys,
-                authDomain: `${firebaseKeys.projectId}.firebaseapp.com`
-            };
-            return initializeApp(config);
+        if (firebaseConfig && firebaseConfig.apiKey) {
+            return initializeApp(firebaseConfig);
         }
     } catch (err) {
         console.error("[Firebase] Initialization failed:", err);
@@ -47,11 +57,11 @@ const initDb = (): Firestore | null => {
         firestore = initializeFirestore(appInstance, {
             experimentalForceLongPolling: true,
             cacheSizeBytes: CACHE_SIZE_UNLIMITED
-        });
+        }, firebaseConfig.firestoreDatabaseId);
         console.log("[Firestore] Relational Plane: Long-Polling Force Engaged.");
     } catch (e) {
         console.warn("[Firestore] Re-initialization skipped, falling back to existing instance.");
-        firestore = getFirestore(appInstance);
+        firestore = getFirestore(appInstance, firebaseConfig.firestoreDatabaseId);
     }
 
     enableIndexedDbPersistence(firestore).catch((err) => {
@@ -70,16 +80,16 @@ if (authInstance) {
 }
 
 export const auth = authInstance;
-export const db: Firestore | null = initDb();
-export const storage: FirebaseStorage | null = appInstance ? getStorage(appInstance, firebaseKeys.storageBucket) : null;
+export const db: Firestore | any = initDb() || { __isLocal: true };
+export const storage: FirebaseStorage | any = appInstance ? getStorage(appInstance, firebaseConfig.storageBucket) : { __isLocal: true };
 
 export const getFirebaseDiagnostics = () => {
     return {
         isInitialized: !!appInstance,
         hasAuth: !!auth,
         hasFirestore: !!db,
-        projectId: firebaseKeys?.projectId || "Missing",
-        configSource: localStorage.getItem('firebase_config') ? 'LocalStorage' : 'Static Keys'
+        projectId: firebaseConfig?.projectId || "Missing",
+        configSource: 'Static Config'
     };
 };
 

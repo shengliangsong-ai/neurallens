@@ -5,7 +5,7 @@ import { Group, UserProfile } from '../types';
 import { auth } from '../services/firebaseConfig';
 import { 
   Users, Plus, RefreshCw, Mail, Send, Trash2, ChevronDown, ChevronUp, User, 
-  Edit2, Check, X, ShieldCheck, UserMinus, Loader2, Globe, Lock, Search, 
+  Edit2, Check, X, ShieldCheck, UserMinus, Loader2, Globe, EyeOff, Search, 
   Compass, LogIn, Activity, Database, ShieldAlert, Zap, RefreshCcw, 
   Info, Bug, AlertCircle, Cpu, Fingerprint, Sparkles, Filter, Power
 } from 'lucide-react';
@@ -292,7 +292,7 @@ export const GroupManager: React.FC<GroupManagerProps> = ({ currentUser, userPro
                                 </button>
                                 <button type="button" onClick={() => setNewGroupVisibility('private')} className={`flex items-center gap-2.5 text-[11px] font-black uppercase tracking-widest transition-colors ${newGroupVisibility === 'private' ? 'text-indigo-400' : 'text-slate-600 hover:text-slate-400'}`}>
                                     <div className={`w-3 h-3 rounded-full border-2 ${newGroupVisibility === 'private' ? 'bg-indigo-500 border-indigo-400' : 'border-slate-700'}`}></div>
-                                    <Lock size={16}/> Private Vault
+                                    <EyeOff size={16}/> Private Vault
                                 </button>
                             </div>
                         </form>
@@ -319,7 +319,7 @@ export const GroupManager: React.FC<GroupManagerProps> = ({ currentUser, userPro
                             <span className="text-[10px] font-black uppercase tracking-[0.4em] animate-pulse">Syncing Neural Ledger...</span>
                             <div className="flex gap-4">
                                 <button onClick={handleManualRefresh} className="text-[9px] font-bold text-slate-500 hover:text-white uppercase tracking-widest flex items-center gap-2 mt-4">
-                                    <RefreshCcw size={12}/> Break Lock & Retry
+                                    <RefreshCcw size={12}/> Break EyeOff & Retry
                                 </button>
                                 <button onClick={() => window.location.reload()} className="text-[9px] font-bold text-slate-500 hover:text-red-400 uppercase tracking-widest flex items-center gap-2 mt-4">
                                     <Power size={12}/> Hard Reset
@@ -357,7 +357,7 @@ export const GroupManager: React.FC<GroupManagerProps> = ({ currentUser, userPro
                                     </div>
                                     <div className="flex flex-wrap items-center gap-6 mt-6">
                                         <div className="flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest"><Users size={16} className="text-indigo-500" /><span>{g.memberIds.length} members</span></div>
-                                        <div className="flex items-center gap-2 text-[9px] font-black uppercase text-slate-600 tracking-widest">{g.visibility === 'public' ? <Globe size={14}/> : <Lock size={14}/>}<span>{g.visibility || 'private'} Collective</span></div>
+                                        <div className="flex items-center gap-2 text-[9px] font-black uppercase text-slate-600 tracking-widest">{g.visibility === 'public' ? <Globe size={14}/> : <EyeOff size={14}/>}<span>{g.visibility || 'private'} Collective</span></div>
                                         {activeTab === 'my' && <button onClick={() => toggleMembers(g)} className="text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-white flex items-center gap-2 transition-colors py-1 px-3 bg-indigo-600/10 rounded-lg border border-indigo-500/20"><span>{expandedGroupId === g.id ? 'Close Directory' : 'View Directory'}</span>{expandedGroupId === g.id ? <ChevronUp size={14}/> : <ChevronDown size={14}/>}</button>}
                                     </div>
                                 </div>
