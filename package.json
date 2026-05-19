@@ -32,5 +32,10 @@
     "tailwindcss": "^3.4.17",
     "typescript": "~5.6.2",
     "vite": "^6.0.5"
+  },
+  "overrides": {
+    "monaco-editor": {
+      "dompurify": "^3.4.0"
+    }
   }
 }
