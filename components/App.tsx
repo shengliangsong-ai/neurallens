@@ -58,6 +58,7 @@ import { FeedbackManager } from './FeedbackManager';
 import { PdfSigner } from './PdfSigner';
 import { BadgeStudio } from './BadgeStudio';
 import { BadgeViewer } from './BadgeViewer';
+import { ClaudeSandbox } from './ClaudeSandbox';
 import { ManualModal } from './ManualModal';
 import { ResumeView } from './ResumeView';
 import { ScribeStudio } from './ScribeStudio';
@@ -634,6 +635,7 @@ const App: React.FC = () => {
         { id: 'book_studio', label: 'Author', icon: BookText, action: () => handleSetViewState('book_studio'), color: 'text-indigo-500', restricted: false },
         { id: 'neural_lens', label: 'Neural Lens', icon: ShieldCheck, action: () => handleSetViewState('neural_lens'), color: 'text-indigo-400', restricted: false },
         { id: 'identity_lab', label: 'Identity Lab', icon: Fingerprint, action: () => handleSetViewState('identity_lab'), color: 'text-indigo-400', restricted: true },
+        { id: 'claude_sandbox', label: 'Claude Sandbox', icon: Command, action: () => handleSetViewState('claude_sandbox'), color: 'text-purple-400', restricted: true },
         { id: 'mock_interview', label: 'Career', icon: Video, action: () => handleSetViewState('mock_interview'), color: 'text-red-500', restricted: true },
         { id: 'coin_wallet', label: 'Wallet', icon: Coins, action: () => handleSetViewState('coin_wallet'), color: 'text-amber-400', restricted: true },
         { id: 'docs', label: 'Docs', icon: FileText, action: () => handleSetViewState('docs'), color: 'text-emerald-400', restricted: true },
@@ -693,19 +695,8 @@ const App: React.FC = () => {
                   <>
                     <div className="fixed inset-0 z-[100]" onClick={() => setIsAppsMenuOpen(false)}></div>
                     <div className="absolute left-0 top-full mt-3 w-80 md:w-[480px] bg-slate-900 border border-slate-700 rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in-up z-[110] flex flex-col border-indigo-500/20">
-                      {!isProMember && (
-                          <>
-                            <div className="p-4 bg-slate-950/50 border-b border-slate-800 flex justify-between items-center"><h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Standard Hub</h3><span className="text-[9px] font-black bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">FREE</span></div>
-                            <div className="p-2 grid grid-cols-1 md:grid-cols-2 gap-1">{appsByTier.free.map(app => (<button key={app.id} onClick={() => { app.action(); setIsAppsMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-600/10 transition-all group"><div className="p-2 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-indigo-500/30"><app.icon size={16} className={app.color}/></div><span className="text-xs font-bold text-slate-300 group-hover:text-white">{app.label}</span></button>))}</div>
-                            <div className="m-3 p-5 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl shadow-xl relative overflow-hidden group/upgrade"><div className="absolute top-0 right-0 p-12 bg-white/10 blur-3xl rounded-full group-hover/upgrade:scale-110 transition-transform"></div><div className="relative z-10"><h4 className="text-white font-black uppercase italic tracking-tighter text-lg">{t.upgradeBtn}</h4><button onClick={() => { setIsPricingModalOpen(true); setIsAppsMenuOpen(false); }} className="mt-4 w-full py-2 bg-white text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-[1.02] transition-transform active:scale-95">Upgrade Now</button></div></div>
-                          </>
-                      )}
-                      {isProMember && (
-                          <>
-                            <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between items-center"><div className="flex items-center gap-2"><h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Full Spectrum</h3><Sparkles size={12} className="text-indigo-400" /></div><div className="flex items-center gap-1.5 bg-indigo-600 text-white px-2 py-0.5 rounded-full shadow-lg border border-indigo-400/50"><Crown size={10} fill="currentColor"/><span className="text-[8px] font-black uppercase">Refracted</span></div></div>
-                            <div className="p-2 grid grid-cols-1 md:grid-cols-2 gap-1 max-h-[60vh] overflow-y-auto scrollbar-hide">{[...appsByTier.free, ...appsByTier.pro].map(app => (<button key={app.id} onClick={() => { app.action(); setIsAppsMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-600/10 transition-all group border border-transparent hover:border-indigo-500/10"><div className={`p-2 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-indigo-500/30 transition-all`}><app.icon size={16} className={app.color}/></div><span className="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">{app.label}</span></button>))}</div>
-                          </>
-                      )}
+                        <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between items-center"><div className="flex items-center gap-2"><h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Platform Tools</h3><Sparkles size={12} className="text-indigo-400" /></div></div>
+                        <div className="p-2 grid grid-cols-1 md:grid-cols-2 gap-1 max-h-[60vh] overflow-y-auto scrollbar-hide">{[...appsByTier.free, ...appsByTier.pro].map(app => (<button key={app.id} onClick={() => { app.action(); setIsAppsMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-600/10 transition-all group border border-transparent hover:border-indigo-500/10"><div className={`p-2 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-indigo-500/30 transition-all`}><app.icon size={16} className={app.color}/></div><span className="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">{app.label}</span></button>))}</div>
                     </div>
                   </>
                 )}
@@ -787,6 +778,7 @@ const App: React.FC = () => {
                 {activeViewID === 'scribe_studio' && ( <ScribeStudio onBack={() => handleSetViewState('dashboard')} currentUser={currentUser} userProfile={userProfile} onOpenManual={() => setManualViewId('scribe_studio')} /> )}
                 {activeViewID === 'neural_lens' && ( <NeuralLens onBack={() => handleSetViewState('dashboard')} userProfile={userProfile} onOpenManual={() => setManualViewId('neural_lens')} /> )}
                 {activeViewID === 'identity_lab' && ( <IdentityLab onBack={() => handleSetViewState('dashboard')} userProfile={userProfile} onOpenManual={() => setManualViewId('identity_lab')} /> )}
+                {activeViewID === 'claude_sandbox' && ( <ClaudeSandbox onBack={() => handleSetViewState('dashboard')}  /> )}
             </GuardedView>
         </main>
 

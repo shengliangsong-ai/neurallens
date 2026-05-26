@@ -7,15 +7,25 @@ interface ApiKeyModalProps {
 }
 
 export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => {
-    const [keyInput, setKeyInput] = useState(localStorage.getItem('GEMINI_API_KEY') || '');
+    const [geminiKeyInput, setGeminiKeyInput] = useState(localStorage.getItem('GEMINI_API_KEY') || '');
+    const [claudeKeyInput, setClaudeKeyInput] = useState(localStorage.getItem('CLAUDE_API_KEY') || '');
 
     if (!isOpen) return null;
 
     const handleSave = () => {
-        if (keyInput.trim()) {
-            localStorage.setItem('GEMINI_API_KEY', keyInput.trim());
-            window.location.reload(); // Reload to pick up the key globally
+        if (geminiKeyInput.trim() !== '') {
+            localStorage.setItem('GEMINI_API_KEY', geminiKeyInput.trim());
+        } else {
+            localStorage.removeItem('GEMINI_API_KEY');
         }
+
+        if (claudeKeyInput.trim() !== '') {
+            localStorage.setItem('CLAUDE_API_KEY', claudeKeyInput.trim());
+        } else {
+            localStorage.removeItem('CLAUDE_API_KEY');
+        }
+
+        window.location.reload(); // Reload to pick up the keys globally
     };
 
     return (
@@ -33,26 +43,38 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
                 <div className="p-6 space-y-6">
                     <div className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 p-3 rounded-lg flex items-start gap-3 text-sm">
                         <Info size={16} className="shrink-0 mt-0.5" />
-                        <p>This action requires a Gemini API Key to continue. Your key is stored locally in your browser and never sent to our servers.</p>
+                        <p>Store your API Keys locally to access AI features. Your keys are saved directly in your browser and never sent to our servers.</p>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gemini API Key</label>
-                        <input
-                            type="password"
-                            value={keyInput}
-                            onChange={(e) => setKeyInput(e.target.value)}
-                            placeholder="AIzaSy..."
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
-                        />
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gemini API Key</label>
+                            <input
+                                type="password"
+                                value={geminiKeyInput}
+                                onChange={(e) => setGeminiKeyInput(e.target.value)}
+                                placeholder="AIzaSy..."
+                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Claude API Key</label>
+                            <input
+                                type="password"
+                                value={claudeKeyInput}
+                                onChange={(e) => setClaudeKeyInput(e.target.value)}
+                                placeholder="sk-ant-api03..."
+                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                            />
+                        </div>
                     </div>
 
                     <button
                         onClick={handleSave}
-                        disabled={!keyInput.trim()}
                         className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 transition"
                     >
-                        <Save size={18} /> Save API Key
+                        <Save size={18} /> Save API Keys
                     </button>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 import { openDB, IDBPDatabase } from 'idb';
 
 const DB_NAME = 'NeuralHubDB';
-const DB_VERSION = 1;
+const DB_VERSION = 3;
 
 let dbPromise: Promise<IDBPDatabase> | null = null;
 
@@ -12,7 +12,12 @@ export const initLocalDb = async () => {
                 const stores = [
                     'channels', 'users', 'discussions', 'blogs', 'blog_posts', 
                     'groups', 'bookings', 'cards', 'checks', 'notebooks', 
-                    'code_projects', 'feedback', 'cloud_files', 'receipts', 'invitations'
+                    'code_projects', 'feedback', 'cloud_files', 'receipts', 'invitations',
+                    'activity_logs', 'transactions', 'custom_books', 'job_postings', 'career_applications',
+                    'recordings', 'chat_channels', 'mock_interviews', 'badges',
+                    'system_book_metadata', 'lecture_cache', 'neural_audio_ledger', 'whiteboards',
+                    'icons', 'shipping', 'coin_transactions', 'bible_ledger', 'signed_documents',
+                    'public_channels', 'user_channels', 'public_groups', 'app_state'
                 ];
                 stores.forEach(store => {
                     if (!db.objectStoreNames.contains(store)) {

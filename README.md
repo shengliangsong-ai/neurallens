@@ -73,3 +73,23 @@ The platform is engineered to drive the marginal cost of intelligence toward zer
 
 **Built for Humanity. Refracted by Neural Prism.**
 *Thanks to Google Gemini for the light.*
+
+---
+
+## 🤖 AI Sandbox Setup
+
+The Neural Prism platform now supports **Claude 3.7 Sonnet** through our new AI Sandbox interface. To use it locally:
+
+1. Obtain your Gemini API Key from Google AI Studio.
+2. Obtain your Claude API Key from Anthropic Console.
+3. Open the Neural Prism application and click on your User Menu (top right corner).
+4. Click **Update API Keys** (or use the **Keys** button inside the Claude Sandbox).
+5. Enter your keys securely. They are stored only in your local browser storage and are never sent to external servers.
+6. Open the App Launcher (Grid icon, top left) and look for **Claude Sandbox** to begin.
+
+### How to Find the Model & API Documentation
+You can read the full, detailed breakdown of our dual-engine model implementation directly inside the application.
+1. Open the **App Launcher** (Grid icon, top left).
+2. Select **Docs**.
+3. Look for the system document titled **Neural Prism: Model & API Documentation**.
+4. Click to open and read it in the platform's native document viewer.

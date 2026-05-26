@@ -31,7 +31,6 @@ import { Whiteboard } from './components/Whiteboard';
 import { BlogView } from './components/BlogView';
 import { WorkplaceChat } from './components/WorkplaceChat';
 import { LoginPage } from './components/LoginPage'; 
-import { PricingModal } from './components/PricingModal'; 
 import { CareerCenter } from './components/CareerCenter';
 import { UserManual } from './components/UserManual'; 
 import { PrivacyPolicy } from './components/PrivacyPolicy';
@@ -191,32 +190,15 @@ const isRestrictedView = (v: string): boolean => {
     return !safeSet.includes(v as any);
 };
 
-const GuardedView = ({ id, children, isProMember, isSuperAdmin, t, onUpgradeClick }: { 
+const GuardedView = ({ id, children, isProMember, isSuperAdmin, t }: { 
     id: ViewID; 
     children?: ReactNode, 
     isProMember: boolean, 
     isSuperAdmin: boolean, 
     t: any, 
-    onUpgradeClick: () => void 
 }) => {
-    if (isRestrictedView(id) && !isProMember) return (
-      <div className="h-full w-full flex items-center justify-center bg-slate-950 p-6">
-          <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-[3.5rem] p-12 text-center shadow-2xl relative overflow-hidden animate-fade-in-up">
-              <div className="absolute top-0 right-0 p-32 bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none"></div>
-              <div className="w-20 h-20 bg-slate-950 rounded-3xl border border-indigo-500/30 flex items-center justify-center mx-auto mb-8 shadow-inner"><Lock size={40} className="text-indigo-500" /></div>
-              <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-4">{t.proRequired}</h2>
-              <p className="text-slate-400 text-sm mb-10 leading-relaxed font-medium">{t.proDesc}</p>
-              <button onClick={onUpgradeClick} className="w-full py-4 bg-indigo-600 hover:bg-indigo-50 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl transition-all active:scale-95">{t.upgradeNow}</button>
-          </div>
-      </div>
-    );
     return (
       <div className="h-full w-full relative flex flex-col">
-        {isSuperAdmin && isRestrictedView(id) && (
-            <div className="absolute bottom-12 left-4 z-50 pointer-events-none bg-indigo-600/40 text-white px-2 py-0.5 rounded-lg border border-indigo-400/20 text-[7px] font-black uppercase tracking-[0.1em] shadow-2xl flex items-center gap-1.5 backdrop-blur-sm opacity-60 hover:opacity-100 transition-opacity">
-                <ShieldCheck size={10}/> Bypass Active
-            </div>
-        )}
         {children}
       </div>
     );
@@ -363,7 +345,6 @@ const App: React.FC = () => {
   const [userChannels, setUserChannels] = useState<Channel[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isVoiceCreateOpen, setIsVoiceCreateOpen] = useState(false);
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   
   const [commentChannelId, setCommentChannelId] = useState<string | null>(null);
   const [editChannelId, setEditChannelId] = useState<string | null>(null);
@@ -401,10 +382,6 @@ const App: React.FC = () => {
   }, [userProfile, isSuperAdmin]);
 
   const handleSetViewState = useCallback((target: ViewID, params: Record<string, string> = {}) => {
-    if (isRestrictedView(target) && !isProMember) {
-        setIsPricingModalOpen(true);
-        return;
-    }
     stopAllPlatformAudio(`Nav:${activeViewID}->${target}`);
     setActiveViewID(target);
     setActiveChannelId(params.channelId || null);
@@ -517,11 +494,6 @@ const App: React.FC = () => {
     recordingTarget?: 'drive' | 'youtube',
     sessionTitle?: string
   ) => {
-    const isSpecialized = ['1', '2', 'default-gem', 'judge-deep-dive'].includes(channel.id);
-    if (isSpecialized && !isProMember) {
-        setIsPricingModalOpen(true);
-        return;
-    }
     setLiveSessionParams({ channel, context, recordingEnabled, bookingId, recordScreen: videoEnabled, recordCamera: cameraEnabled, activeSegment, recordingDuration, interactionEnabled, recordingTarget, sessionTitle, returnTo: activeViewID });
     handleSetViewState('live_session');
   }, [activeViewID, handleSetViewState, isProMember]);
@@ -645,9 +617,8 @@ const App: React.FC = () => {
   }, [handleSetViewState, t]);
 
   const handleMagicCreate = useCallback(() => {
-    if (isProMember) setIsVoiceCreateOpen(true);
-    else setIsPricingModalOpen(true);
-  }, [isProMember]);
+    setIsVoiceCreateOpen(true);
+  }, []);
 
   if (authLoading) return <div className="h-screen bg-slate-950 flex flex-col items-center justify-center gap-4"><Loader2 className="animate-spin text-indigo-500" size={32} /><span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Initializing Spectrum (v9.0.0)...</span></div>;
 
@@ -689,19 +660,8 @@ const App: React.FC = () => {
                   <>
                     <div className="fixed inset-0 z-[100]" onClick={() => setIsAppsMenuOpen(false)}></div>
                     <div className="absolute left-0 top-full mt-3 w-80 md:w-[480px] bg-slate-900 border border-slate-700 rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in-up z-[110] flex flex-col border-indigo-500/20">
-                      {!isProMember && (
-                          <>
-                            <div className="p-4 bg-slate-950/50 border-b border-slate-800 flex justify-between items-center"><h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Standard Hub</h3><span className="text-[9px] font-black bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">FREE</span></div>
-                            <div className="p-2 grid grid-cols-1 md:grid-cols-2 gap-1">{appsByTier.free.map(app => (<button key={app.id} onClick={() => { app.action(); setIsAppsMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-600/10 transition-all group"><div className="p-2 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-indigo-500/30"><app.icon size={16} className={app.color}/></div><span className="text-xs font-bold text-slate-300 group-hover:text-white">{app.label}</span></button>))}</div>
-                            <div className="m-3 p-5 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl shadow-xl relative overflow-hidden group/upgrade"><div className="absolute top-0 right-0 p-12 bg-white/10 blur-3xl rounded-full group-hover/upgrade:scale-110 transition-transform"></div><div className="relative z-10"><h4 className="text-white font-black uppercase italic tracking-tighter text-lg">{t.upgradeBtn}</h4><button onClick={() => { setIsPricingModalOpen(true); setIsAppsMenuOpen(false); }} className="mt-4 w-full py-2 bg-white text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-[1.02] transition-transform active:scale-95">Upgrade Now</button></div></div>
-                          </>
-                      )}
-                      {isProMember && (
-                          <>
-                            <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between items-center"><div className="flex items-center gap-2"><h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Full Spectrum</h3><Sparkles size={12} className="text-indigo-400" /></div><div className="flex items-center gap-1.5 bg-indigo-600 text-white px-2 py-0.5 rounded-full shadow-lg border border-indigo-400/50"><Crown size={10} fill="currentColor"/><span className="text-[8px] font-black uppercase">Refracted</span></div></div>
-                            <div className="p-2 grid grid-cols-1 md:grid-cols-2 gap-1 max-h-[60vh] overflow-y-auto scrollbar-hide">{[...appsByTier.free, ...appsByTier.pro].map(app => (<button key={app.id} onClick={() => { app.action(); setIsAppsMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-600/10 transition-all group border border-transparent hover:border-indigo-500/10"><div className={`p-2 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-indigo-500/30 transition-all`}><app.icon size={16} className={app.color}/></div><span className="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">{app.label}</span></button>))}</div>
-                          </>
-                      )}
+                        <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between items-center"><div className="flex items-center gap-2"><h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Platform Tools</h3><Sparkles size={12} className="text-indigo-400" /></div></div>
+                        <div className="p-2 grid grid-cols-1 md:grid-cols-2 gap-1 max-h-[60vh] overflow-y-auto scrollbar-hide">{[...appsByTier.free, ...appsByTier.pro].map(app => (<button key={app.id} onClick={() => { app.action(); setIsAppsMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-600/10 transition-all group border border-transparent hover:border-indigo-500/10"><div className={`p-2 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-indigo-500/30 transition-all`}><app.icon size={16} className={app.color}/></div><span className="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">{app.label}</span></button>))}</div>
                     </div>
                   </>
                 )}
@@ -720,14 +680,14 @@ const App: React.FC = () => {
               <button onClick={() => setShowConsole(!showConsole)} className={`p-2 transition-all rounded-lg ${showConsole ? 'bg-red-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`} title="Neural Diagnostics"><Bug size={18} className={!showConsole ? 'animate-pulse text-red-500' : ''} /></button>
               <button onClick={() => window.location.reload()} className="p-2 text-slate-400 hover:text-white transition-colors" title="Reload Web App"><RefreshCcw size={18} /></button>
               {userProfile && (<button onClick={() => handleSetViewState('coin_wallet')} className="flex items-center gap-2 px-3 py-1.5 bg-amber-900/20 hover:bg-amber-900/40 text-amber-400 rounded-full border border-amber-500/30 transition-all hidden sm:flex"><Coins size={16}/><span className="font-black text-xs">{userProfile.coinBalance || 0}</span></button>)}
-              <div className="relative"><button onClick={() => { setIsUserMenuOpen(!isUserMenuOpen); setIsAppsMenuOpen(false); }} className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden hover:border-indigo-500 transition-colors"><img src={currentUser?.photoURL || `https://ui-avatars.com/api/?name=${currentUser?.displayName}`} alt="Profile" className="w-full h-full object-cover" /></button><StudioMenu isUserMenuOpen={isUserMenuOpen} setIsUserMenuOpen={setIsUserMenuOpen} currentUser={currentUser} userProfile={userProfile} setUserProfile={setUserProfile} globalVoice="Auto" setGlobalVoice={()=>{}} setIsCreateModalOpen={setIsCreateModalOpen} setIsVoiceCreateOpen={setIsVoiceCreateOpen} onNavigate={(v, p) => handleSetViewState(v as any, p)} onUpgradeClick={() => setIsPricingModalOpen(true)} setIsSyncModalOpen={()=>{}} onOpenUserGuide={() => handleSetViewState('user_guide')} onOpenPrivacy={() => handleSetViewState('privacy')} t={t} language={language} setLanguage={handleUpdateLanguage} channels={allChannels} isSuperAdmin={isSuperAdmin} isProMember={isProMember} /></div>
+              <div className="relative"><button onClick={() => { setIsUserMenuOpen(!isUserMenuOpen); setIsAppsMenuOpen(false); }} className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden hover:border-indigo-500 transition-colors"><img src={currentUser?.photoURL || `https://ui-avatars.com/api/?name=${currentUser?.displayName}`} alt="Profile" className="w-full h-full object-cover" /></button><StudioMenu isUserMenuOpen={isUserMenuOpen} setIsUserMenuOpen={setIsUserMenuOpen} currentUser={currentUser} userProfile={userProfile} setUserProfile={setUserProfile} globalVoice="Auto" setGlobalVoice={()=>{}} setIsCreateModalOpen={setIsCreateModalOpen} setIsVoiceCreateOpen={setIsVoiceCreateOpen} onNavigate={(v, p) => handleSetViewState(v as any, p)} setIsSyncModalOpen={()=>{}} onOpenUserGuide={() => handleSetViewState('user_guide')} onOpenPrivacy={() => handleSetViewState('privacy')} t={t} language={language} setLanguage={handleUpdateLanguage} channels={allChannels} isSuperAdmin={isSuperAdmin} isProMember={isProMember} /></div>
            </div>
         </header>
 
         <main className="flex-1 overflow-hidden relative flex flex-col pb-10">
-            <GuardedView id={activeViewID} isProMember={isProMember} isSuperAdmin={isSuperAdmin} t={t} onUpgradeClick={() => setIsPricingModalOpen(true)}>
+            <GuardedView id={activeViewID} isProMember={isProMember} isSuperAdmin={isSuperAdmin} t={t}>
                 {activeViewID === 'dashboard' && ( <Dashboard userProfile={userProfile} isProMember={isProMember} onNavigate={handleSetViewState} language={language} handleVote={handleVote} onOpenManual={() => setManualViewId('dashboard')} /> )}
-                {activeViewID === 'directory' && ( <PodcastFeed channels={allChannels} onChannelClick={(id) => { setActiveChannelId(id); handleSetViewState('podcast_detail', { channelId: id }); }} onStartLiveSession={handleStartLiveSession} userProfile={userProfile} globalVoice="Auto" currentUser={currentUser} t={t} setChannelToEdit={(c) => setEditChannelId(c.id)} onCommentClick={(c) => setCommentChannelId(c.id)} handleVote={handleVote} handleBookmarkToggle={handleBookmarkToggle} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onNavigate={(v) => handleSetViewState(v as any)} onUpdateChannel={handleUpdateChannel} onOpenPricing={() => setIsPricingModalOpen(true)} language={language} onMagicCreate={handleMagicCreate} onOpenManual={() => setManualViewId('directory')} /> )}
+                {activeViewID === 'directory' && ( <PodcastFeed channels={allChannels} onChannelClick={(id) => { setActiveChannelId(id); handleSetViewState('podcast_detail', { channelId: id }); }} onStartLiveSession={handleStartLiveSession} userProfile={userProfile} globalVoice="Auto" currentUser={currentUser} t={t} setChannelToEdit={(c) => setEditChannelId(c.id)} onCommentClick={(c) => setCommentChannelId(c.id)} handleVote={handleVote} handleBookmarkToggle={handleBookmarkToggle} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onNavigate={(v) => handleSetViewState(v as any)} onUpdateChannel={handleUpdateChannel} language={language} onMagicCreate={handleMagicCreate} onOpenManual={() => setManualViewId('directory')} /> )}
                 {activeViewID === 'podcast_detail' && activeChannel && ( <PodcastDetail channel={activeChannel} onBack={handleDetailBack} onStartLiveSession={handleStartLiveSession} language={language} currentUser={currentUser} userProfile={userProfile} onUpdateChannel={handleUpdateChannel} isProMember={isProMember} /> )}
                 {activeViewID === 'live_session' && liveSessionParams && ( <LiveSession channel={liveSessionParams.channel} onEndSession={() => handleSetViewState(liveSessionParams.returnTo || 'directory')} language={language} initialContext={liveSessionParams.context} recordingEnabled={liveSessionParams.recordingEnabled} lectureId={liveSessionParams.bookingId} recordScreen={liveSessionParams.recordScreen} recordCamera={liveSessionParams.recordCamera} activeSegment={liveSessionParams.activeSegment} recordingDuration={liveSessionParams.recordingDuration} interactionEnabled={liveSessionParams.interactionEnabled} recordingTarget={liveSessionParams.recordingTarget} sessionTitle={liveSessionParams.sessionTitle} /> )}
                 {activeViewID === 'docs' && ( <div className="p-8 max-w-5xl mx-auto h-full overflow-y-auto"><DocumentList onBack={() => handleSetViewState('dashboard')} onOpenManual={() => setManualViewId('docs')} /></div> )}
@@ -937,7 +897,6 @@ const App: React.FC = () => {
 
         <CreateChannelModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onCreate={handleCreateChannel} currentUser={currentUser} />
         <VoiceCreateModal isOpen={isVoiceCreateOpen} onClose={() => setIsVoiceCreateOpen(false)} onCreate={handleCreateChannel} />
-        <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} user={userProfile} onSuccess={(tier) => { if(userProfile) setUserProfile({...userProfile, subscriptionTier: tier}); }} />
         
         {commentChannelId && ( <CommentsModal isOpen={true} onClose={() => setCommentChannelId(null)} channel={commentChannel!} onAddComment={handleAddComment} onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} currentUser={currentUser} /> )}
         {editChannelId && ( <ChannelSettingsModal isOpen={true} onClose={() => setEditChannelId(null)} channel={editChannel!} onUpdate={handleUpdateChannel} /> )}

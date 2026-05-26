@@ -10,6 +10,7 @@
     "start": "vite build && vite preview --host 0.0.0.0 --port $PORT"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.98.0",
     "@google/genai": "^1.30.0",
     "@monaco-editor/react": "^4.7.0",
     "html2canvas": "^1.4.1",

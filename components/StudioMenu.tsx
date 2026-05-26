@@ -16,7 +16,6 @@ interface StudioMenuProps {
   setGlobalVoice: (v: string) => void;
   setIsCreateModalOpen: (open: boolean) => void;
   setIsVoiceCreateOpen: (open: boolean) => void;
-  onUpgradeClick: () => void;
   setIsSyncModalOpen: (open: boolean) => void;
   onOpenUserGuide: () => void;
   onNavigate: (view: string, params?: Record<string, string>) => void;
@@ -33,7 +32,7 @@ interface StudioMenuProps {
 
 export const StudioMenu: React.FC<StudioMenuProps> = ({
   isUserMenuOpen, setIsUserMenuOpen, userProfile, setUserProfile, currentUser,
-  setIsCreateModalOpen, setIsVoiceCreateOpen, onUpgradeClick, onOpenUserGuide, onNavigate, onOpenPrivacy,
+  setIsCreateModalOpen, setIsVoiceCreateOpen, onOpenUserGuide, onNavigate, onOpenPrivacy,
   className, channels = [],
   language, setLanguage, isSuperAdmin: propSuperAdmin, isProMember, t
 }) => {
@@ -147,53 +146,36 @@ export const StudioMenu: React.FC<StudioMenuProps> = ({
                <span className="font-bold">Source Code</span>
             </a>
             
-            {isProMember ? (
-                <>
-                    <button 
-                        onClick={() => { setIsVoiceCreateOpen(true); setIsUserMenuOpen(false); }} 
-                        className="w-full flex items-center justify-between px-3 py-2 text-sm text-white hover:bg-indigo-600/20 rounded-lg group transition-colors"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="p-1.5 bg-indigo-900/50 text-indigo-400 rounded-md group-hover:bg-indigo-600 group-hover:text-white transition-colors"><Wand2 size={16}/></div>
-                            <span className="font-bold text-indigo-300">{t.magic}</span>
-                        </div>
-                    </button>
-                    <button 
-                        onClick={() => { setIsCreateModalOpen(true); setIsUserMenuOpen(false); }} 
-                        className="w-full flex items-center justify-between px-3 py-2 text-sm text-white hover:bg-slate-800 rounded-lg group"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="p-1.5 bg-slate-800 text-slate-400 rounded-md"><Plus size={16}/></div>
-                            <span className="font-medium">Manual Create</span>
-                        </div>
-                    </button>
-                    <button 
-                        onClick={() => {
-                            window.dispatchEvent(new Event('MISSING_API_KEY'));
-                            setIsUserMenuOpen(false);
-                        }} 
-                        className="w-full flex items-center justify-between px-3 py-2 text-sm text-amber-500 hover:bg-slate-800 rounded-lg group"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="p-1.5 bg-slate-800 text-amber-600 rounded-md"><Key size={16}/></div>
-                            <span className="font-bold">Update API Key</span>
-                        </div>
-                    </button>
-                </>
-            ) : (
-                <button 
-                    onClick={() => {
-                        window.dispatchEvent(new Event('MISSING_API_KEY'));
-                        setIsUserMenuOpen(false);
-                    }} 
-                    className="w-full flex items-center justify-between px-3 py-2 text-sm text-amber-500 hover:bg-slate-800 rounded-lg group"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="p-1.5 bg-slate-800 text-amber-600 rounded-md"><Key size={16}/></div>
-                        <span className="font-bold">Set API Key</span>
-                    </div>
-                </button>
-            )}
+            <button 
+                onClick={() => { setIsVoiceCreateOpen(true); setIsUserMenuOpen(false); }} 
+                className="w-full flex items-center justify-between px-3 py-2 text-sm text-white hover:bg-indigo-600/20 rounded-lg group transition-colors"
+            >
+                <div className="flex items-center gap-3">
+                    <div className="p-1.5 bg-indigo-900/50 text-indigo-400 rounded-md group-hover:bg-indigo-600 group-hover:text-white transition-colors"><Wand2 size={16}/></div>
+                    <span className="font-bold text-indigo-300">{t.magic}</span>
+                </div>
+            </button>
+            <button 
+                onClick={() => { setIsCreateModalOpen(true); setIsUserMenuOpen(false); }} 
+                className="w-full flex items-center justify-between px-3 py-2 text-sm text-white hover:bg-slate-800 rounded-lg group"
+            >
+                <div className="flex items-center gap-3">
+                    <div className="p-1.5 bg-slate-800 text-slate-400 rounded-md"><Plus size={16}/></div>
+                    <span className="font-medium">Manual Create</span>
+                </div>
+            </button>
+            <button 
+                onClick={() => {
+                    window.dispatchEvent(new Event('MISSING_API_KEY'));
+                    setIsUserMenuOpen(false);
+                }} 
+                className="w-full flex items-center justify-between px-3 py-2 text-sm text-amber-500 hover:bg-slate-800 rounded-lg group"
+            >
+                <div className="flex items-center gap-3">
+                    <div className="p-1.5 bg-slate-800 text-amber-600 rounded-md"><Key size={16}/></div>
+                    <span className="font-bold">Update API Keys</span>
+                </div>
+            </button>
 
             <div className="h-px bg-slate-800 my-2 mx-2" />
             <div className="px-3 py-2">

@@ -4,7 +4,7 @@ import { getUserDesignDocs, deleteDiscussion, getPublicDesignDocs, getGroupDesig
 import { FileText, ArrowRight, Loader2, MessageSquare, Plus, ShieldCheck, Trash2, Info, FileCode, Globe, Users, EyeOff, User, AlertCircle, Sparkles } from 'lucide-react';
 import { auth } from '../services/firebaseConfig';
 import { DiscussionModal } from './DiscussionModal';
-import { APP_COMPARISON_DOC, STACK_STORY_DOC, BUILT_WITH_DOC } from '../utils/docContent';
+import { APP_COMPARISON_DOC, STACK_STORY_DOC, BUILT_WITH_DOC, MODEL_API_DOC } from '../utils/docContent';
 
 interface DocumentListProps {
   onBack?: () => void;
@@ -52,14 +52,14 @@ export const DocumentList: React.FC<DocumentListProps> = ({ onBack, onOpenManual
       
       // 4. Handle System Comparison Document Visibility
       const isSystemDocHidden = localStorage.getItem('hide_system_doc_v1') === 'true';
-      const systemDocs = isSystemDocHidden ? [] : [APP_COMPARISON_DOC, STACK_STORY_DOC, BUILT_WITH_DOC];
+      const systemDocs = isSystemDocHidden ? [] : [APP_COMPARISON_DOC, STACK_STORY_DOC, BUILT_WITH_DOC, MODEL_API_DOC];
       
-      const finalDocs = [...systemDocs, ...unique.filter(d => ![APP_COMPARISON_DOC.id, STACK_STORY_DOC.id, BUILT_WITH_DOC.id].includes(d.id))];
+      const finalDocs = [...systemDocs, ...unique.filter(d => ![APP_COMPARISON_DOC.id, STACK_STORY_DOC.id, BUILT_WITH_DOC.id, MODEL_API_DOC.id].includes(d.id))];
       
       setDocs(finalDocs.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt)));
     } catch (e) {
       console.error("Critical error loading document archive", e);
-      setDocs([APP_COMPARISON_DOC, STACK_STORY_DOC, BUILT_WITH_DOC]);
+      setDocs([APP_COMPARISON_DOC, STACK_STORY_DOC, BUILT_WITH_DOC, MODEL_API_DOC]);
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ onBack, onOpenManual
   const handleDelete = async (e: React.MouseEvent, id: string) => {
       e.stopPropagation();
       if (!id || id === 'new') return;
-      if ([APP_COMPARISON_DOC.id, STACK_STORY_DOC.id, BUILT_WITH_DOC.id].includes(id)) {
+      if ([APP_COMPARISON_DOC.id, STACK_STORY_DOC.id, BUILT_WITH_DOC.id, MODEL_API_DOC.id].includes(id)) {
           // System doc hiding executes immediately
           localStorage.setItem('hide_system_doc_v1', 'true'); 
           loadData(); 
@@ -129,7 +129,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ onBack, onOpenManual
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {docs.map((doc) => {
-            const isSystem = [APP_COMPARISON_DOC.id, STACK_STORY_DOC.id, BUILT_WITH_DOC.id].includes(doc.id);
+            const isSystem = [APP_COMPARISON_DOC.id, STACK_STORY_DOC.id, BUILT_WITH_DOC.id, MODEL_API_DOC.id].includes(doc.id);
             const isMyDoc = currentUser && doc.userId === currentUser.uid;
             return (
               <div 

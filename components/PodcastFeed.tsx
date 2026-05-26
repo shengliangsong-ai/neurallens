@@ -31,7 +31,6 @@ interface PodcastFeedProps {
   searchQuery?: string;
   setSearchQuery?: (q: string) => void;
   onNavigate?: (view: string) => void;
-  onOpenPricing?: () => void;
   onOpenManual?: () => void;
   onUpdateChannel?: (channel: Channel) => Promise<void>;
   language?: 'en' | 'zh';
@@ -470,7 +469,7 @@ const MobileFeedCard = ({ channel, isActive, onChannelClick, language, preferred
 };
 
 export const PodcastFeed: React.FC<PodcastFeedProps> = ({ 
-  channels, onChannelClick, onStartLiveSession, userProfile, globalVoice, onRefresh, currentUser, setChannelToEdit, onCommentClick, handleVote, handleBookmarkToggle, searchQuery, setSearchQuery, onNavigate, onUpdateChannel, onOpenPricing, language, t, onMagicCreate, onOpenManual
+  channels, onChannelClick, onStartLiveSession, userProfile, globalVoice, onRefresh, currentUser, setChannelToEdit, onCommentClick, handleVote, handleBookmarkToggle, searchQuery, setSearchQuery, onNavigate, onUpdateChannel, language, t, onMagicCreate, onOpenManual
 }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'table' | 'mobile'>(() => window.innerWidth < 768 ? 'mobile' : 'grid');
   const lastNonMobileMode = useRef<'grid' | 'table'>('grid');
